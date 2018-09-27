@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
-* Студент: [Антон Лантух](https://up.htmlacademy.ru/nodejs/2/user/423185).
-* Наставник: `Неизвестно`.
+- Студент: [Антон Лантух](https://up.htmlacademy.ru/nodejs/2/user/423185).
+- Наставник: [Даниил Колесниченко](https://htmlacademy.ru/profile/kolesnichenkods).
 
 ---
 
