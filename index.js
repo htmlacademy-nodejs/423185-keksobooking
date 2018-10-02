@@ -22,13 +22,17 @@ const showError = (command) =>
 switch (args[0]) {
   case `--version`:
     console.log(project.version);
+    process.exit(0);
     break;
   case `--help`:
     console.log(output.help);
+    process.exit(0);
     break;
   case undefined:
     console.log(output.default);
+    process.exit(0);
     break;
   default:
     console.error(showError(args[0]));
+    process.exit(1);
 }
