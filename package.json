@@ -1,0 +1,24 @@
+{
+  "name": "423185-keksobooking-1",
+  "version": "0.0.1",
+  "description": "- Студент: [Антон Лантух](https://up.htmlacademy.ru/nodejs/2/user/423185). - Наставник: [Даниил Колесниченко](https://htmlacademy.ru/profile/kolesnichenkods).",
+  "main": "index.js",
+  "scripts": {
+    "test:lint": "eslint .",
+    "test": "npm run test:lint"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AntonLantukh/423185-keksobooking-1.git"
+  },
+  "author": "Anton Lantukh",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AntonLantukh/423185-keksobooking-1/issues"
+  },
+  "homepage": "https://github.com/AntonLantukh/423185-keksobooking-1#readme",
+  "devDependencies": {
+    "eslint": "5.6.1",
+    "eslint-config-htmlacademy": "^0.5.2"
+  }
+}
