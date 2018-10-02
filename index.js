@@ -1,34 +1,34 @@
 'use strict';
 
-const project = {
-  name: `keksobooking`,
-  version: `v0.0.1`,
-  author: `Anton Lantukh`
-};
-
-const output = {
-  default: `Привет пользователь!\n
-    Эта программа будет запускать сервер «${project.name}».\n
-    Автор: ${project.author}.;\n`,
-  help: `Доступные команды:\n
-    --help    — печатает этот текст;\n
-    --version — печатает версию приложения;`
-};
+const author = require(`./src/author`);
+const defaultMessage = require(`./src/default-message`);
+const description = require(`./src/description`);
+const error = require(`./src/error`);
+const help = require(`./src/help`);
+const license = require(`./src/license`);
+const version = require(`./src/version`);
 
 const args = process.argv.slice(2);
-const showError = (command) =>
-  `Неизвестная команда ${command}.\n Чтобы прочитать правила использования приложения, наберите '--help'`;
 
 switch (args[0]) {
+  case `--author`:
+    author.execute();
+    break;
+  case `--description`:
+    description.execute();
+    break;
   case `--version`:
-    console.log(project.version);
+    version.execute();
+    break;
+  case `--license`:
+    license.execute();
     break;
   case `--help`:
-    console.log(output.help);
+    help.execute();
     break;
   case undefined:
-    console.log(output.default);
+    defaultMessage.execute();
     break;
   default:
-    console.error(showError(args[0]));
+    error.execute(args[0]);
 }
