@@ -7,25 +7,23 @@ const commands = [
   require(`./src/version`),
   require(`./src/help`)
 ];
-
 const defaultMessage = require(`./src/default`);
-const error = require(`./src/error`);
 
+const showError = (com) =>
+  `Неизвестная команда ${com}.\n Чтобы прочитать правила использования приложения, наберите '--help'`;
 const arg = process.argv.slice(2);
 const value = arg[0];
 
 if (value) {
-  const command = commands.find((item) => {
-    return value.substr(2) === item.name;
-  });
+  const command = commands.find((item) => value === `--${item.name}`);
   if (command) {
     command.execute(commands);
-    process.exit(0);
   } else {
-    error.execute(value);
+    console.error(showError(value));
     process.exit(1);
   }
 } else {
   defaultMessage.execute(commands);
-  process.exit(0);
 }
+
+process.exit(0);
