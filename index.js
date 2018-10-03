@@ -1,5 +1,6 @@
 'use strict';
 
+const colors = require(`colors`);
 const commands = [
   require(`./src/author`),
   require(`./src/description`),
@@ -10,7 +11,7 @@ const commands = [
 const defaultMessage = require(`./src/default`);
 
 const showError = (com) =>
-  `Неизвестная команда ${com}.\n Чтобы прочитать правила использования приложения, наберите '--help'`;
+  colors.red(`Неизвестная команда ${com}.\n Чтобы прочитать правила использования приложения, наберите '--help'`);
 const arg = process.argv.slice(2);
 const value = arg[0];
 
