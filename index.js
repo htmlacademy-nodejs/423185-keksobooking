@@ -1,38 +1,29 @@
 'use strict';
 
-const project = {
-  name: `keksobooking`,
-  version: `v0.0.1`,
-  author: `Anton Lantukh`
-};
+const commands = [
+  require(`./src/author`),
+  require(`./src/description`),
+  require(`./src/license`),
+  require(`./src/version`),
+  require(`./src/help`)
+];
+const defaultMessage = require(`./src/default`);
 
-const output = {
-  default: `Привет пользователь!\n
-    Эта программа будет запускать сервер «${project.name}».\n
-    Автор: ${project.author}.;\n`,
-  help: `Доступные команды:\n
-    --help    — печатает этот текст;\n
-    --version — печатает версию приложения;`
-};
+const showError = (com) =>
+  `Неизвестная команда ${com}.\n Чтобы прочитать правила использования приложения, наберите '--help'`;
+const arg = process.argv.slice(2);
+const value = arg[0];
 
-const args = process.argv.slice(2);
-const showError = (command) =>
-  `Неизвестная команда ${command}.\n Чтобы прочитать правила использования приложения, наберите '--help'`;
-
-switch (args[0]) {
-  case `--version`:
-    console.log(project.version);
-    process.exit(0);
-    break;
-  case `--help`:
-    console.log(output.help);
-    process.exit(0);
-    break;
-  case undefined:
-    console.log(output.default);
-    process.exit(0);
-    break;
-  default:
-    console.error(showError(args[0]));
+if (value) {
+  const command = commands.find((item) => value === `--${item.name}`);
+  if (command) {
+    command.execute(commands);
+  } else {
+    console.error(showError(value));
     process.exit(1);
+  }
+} else {
+  defaultMessage.execute(commands);
 }
+
+process.exit(0);

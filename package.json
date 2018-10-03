@@ -1,7 +1,7 @@
 {
   "name": "423185-keksobooking-1",
   "version": "0.0.1",
-  "description": "- Студент: [Антон Лантух](https://up.htmlacademy.ru/nodejs/2/user/423185). - Наставник: [Даниил Колесниченко](https://htmlacademy.ru/profile/kolesnichenkods).",
+  "description": "Это проект Кексобукинг",
   "main": "index.js",
   "scripts": {
     "test:lint": "eslint .",
