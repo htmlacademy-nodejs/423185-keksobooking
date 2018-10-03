@@ -1,7 +1,9 @@
 'use strict';
 
+const colors = require(`colors`);
+
 const showError = (command) =>
-  `Неизвестная команда ${command}.\n Чтобы прочитать правила использования приложения, наберите '--help'`;
+  colors.red(`Неизвестная команда ${command}.\n Чтобы прочитать правила использования приложения, наберите '--help'`);
 
 module.exports = {
   name: `error`,
