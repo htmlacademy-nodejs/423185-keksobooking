@@ -1,7 +1,7 @@
 {
   "name": "423185-keksobooking-1",
   "version": "0.0.1",
-  "description": "This is keksoboking project",
+  "description": "Это проект Кексобукинг",
   "main": "index.js",
   "scripts": {
     "test:lint": "eslint .",
