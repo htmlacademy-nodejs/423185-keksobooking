@@ -90,5 +90,14 @@ describe(`Generate function`, () => {
     assert.ok(file.offer.features.every((item) => types.includes(item)));
   });
 
+  it(`Offer property should have empty description`, () => {
+    assert.ok(file.offer.description === ``);
+  });
+
+  it(`Offer property should have photos array`, () => {
+    const photos = data.photos;
+    assert.ok((photos.sort().join(`,`) === file.offer.photos.sort().join(`,`)));
+  });
+
   fs.unlink(`${TEMP_DIR}/generatedData.json`);
 });
