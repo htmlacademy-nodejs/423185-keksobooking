@@ -12,7 +12,7 @@ const generateRandomString = (setLength) => {
 
 const generateDate = () => {
   const sevenDays = 604800;
-  const currentDate = new Date();
+  const currentDate = Date.now();
 
   return currentDate - sevenDays;
 };
