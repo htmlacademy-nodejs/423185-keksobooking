@@ -106,5 +106,8 @@ describe(`Generate function`, () => {
     assert.ok((photos.sort().join(`,`) === file.offer.photos.sort().join(`,`)));
   });
 
-  fs.unlink(`${TEMP_DIR}/generatedData.json`);
+  after((done) => {
+    fs.unlink(`${TEMP_DIR}/generatedData.json`);
+    done();
+  });
 });
