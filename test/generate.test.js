@@ -2,32 +2,39 @@
 
 const assert = require(`assert`);
 const fs = require(`fs`);
+const path = require(`path`);
 const generate = require(`../src/generator/generate`);
 const data = require(`../src/data/raw-data`);
 const TEMP_DIR = __dirname;
 let file = ``;
 
 const generateFile = () => {
-  generate.execute(TEMP_DIR);
   return new Promise((success, fail) => {
-    fs.readFile(`${TEMP_DIR}/generatedData.json`, `utf8`, (err, fd) => {
-      file = JSON.parse(fd);
-      success();
-      if (err) {
-        fail();
-      }
+    generate.execute(TEMP_DIR).then(() => {
+      fs.readFile(path.join(TEMP_DIR, `/generatedData.json`), `utf8`, (err, fd) => {
+        file = JSON.parse(fd);
+        success();
+        if (err) {
+          fail();
+        }
+      });
     });
   });
 };
 
 describe(`Generate function`, () => {
-  generateFile();
+  before((done) => {
+    generateFile().then(() => {
+      done();
+    });
+  });
 
-  it(`Should create file in exact folder`, () => {
-    fs.access(`${TEMP_DIR}/generatedData.json`, (err) => {
+  it(`Should create file in exact folder`, (done) => {
+    fs.access(path.join(TEMP_DIR, `/generatedData.json`), (err) => {
       if (err) {
         assert.fail(err);
       }
+      done();
     });
   });
 
@@ -71,12 +78,12 @@ describe(`Generate function`, () => {
   });
 
   it(`Offer property should have correct rooms size`, () => {
-    assert.ok(file.offer.rooms > 1 && file.offer.rooms < 5);
+    assert.ok(file.offer.rooms >= 1 && file.offer.rooms <= 5);
 
   });
 
   it(`Offer property should have correct guests number`, () => {
-    assert.ok(file.offer.guests > 1 && file.offer.guests < 5);
+    assert.ok(file.offer.guests >= 1 && file.offer.guests <= 5);
   });
 
   it(`Offer property should have correct checkin and checkout time`, () => {
