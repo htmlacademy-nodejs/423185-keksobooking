@@ -14,7 +14,6 @@ const getData = (cnt) => {
     data.push(generateEntity());
   }
 
-  console.log(data);
   return data;
 };
 
@@ -22,7 +21,7 @@ module.exports = {
   execute(gotPath = CURRENT_PATH, count = BASE_COUNT) {
     const data = getData(count);
     return new Promise((success, fail) => {
-      fs.writeFile(path.join(gotPath, `/generatedData.json`), JSON.stringify(data), {encoding: `utf-8`}, (err) => {
+      fs.writeFile(path.join(gotPath, `/generated-data.json`), JSON.stringify(data), {encoding: `utf-8`}, (err) => {
         if (err) {
           return fail(err);
         }

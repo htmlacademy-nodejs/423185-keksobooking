@@ -11,7 +11,7 @@ let file = ``;
 const generateFile = () => {
   return new Promise((success, fail) => {
     generate.execute(TEMP_DIR).then(() => {
-      fs.readFile(path.join(TEMP_DIR, `/generatedData.json`), `utf8`, (err, fd) => {
+      fs.readFile(path.join(TEMP_DIR, `/generated-data.json`), `utf8`, (err, fd) => {
         file = JSON.parse(fd);
         success();
         if (err) {
@@ -30,7 +30,7 @@ describe(`Generate function`, () => {
   });
 
   it(`Should create file in exact folder`, (done) => {
-    fs.access(path.join(TEMP_DIR, `/generatedData.json`), (err) => {
+    fs.access(path.join(TEMP_DIR, `/generated-data.json`), (err) => {
       if (err) {
         assert.fail(err);
       }
@@ -107,7 +107,7 @@ describe(`Generate function`, () => {
   });
 
   after((done) => {
-    fs.unlink(`${TEMP_DIR}/generatedData.json`);
+    fs.unlink(`${TEMP_DIR}/generated-data.json`);
     done();
   });
 });

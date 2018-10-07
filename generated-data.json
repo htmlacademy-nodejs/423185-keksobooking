@@ -1,0 +1,151 @@
+[
+    {
+        "author": {
+            "avatar": "https://robohash.org/Ga5qrlMY1Q"
+        },
+        "offer": {
+            "title": "Большая уютная квартира",
+            "address": "386, 363",
+            "price": 797762,
+            "type": "flat",
+            "rooms": 3,
+            "guests": 4,
+            "checkin": "14:00",
+            "checkout": "13:00",
+            "features": [
+                "conditioner"
+            ],
+            "description": "",
+            "photos": [
+                "http://o0.github.io/assets/images/tokyo/hotel1.jpg",
+                "http://o0.github.io/assets/images/tokyo/hotel2.jpg",
+                "http://o0.github.io/assets/images/tokyo/hotel3.jpg"
+            ]
+        },
+        "location": {
+            "x": 386,
+            "y": 363
+        },
+        "date": 1538950921337
+    },
+    {
+        "author": {
+            "avatar": "https://robohash.org/KPdFAjpSR1"
+        },
+        "offer": {
+            "title": "Неуютное бунгало по колено в воде",
+            "address": "731, 221",
+            "price": 796341,
+            "type": "house",
+            "rooms": 4,
+            "guests": 2,
+            "checkin": "12:00",
+            "checkout": "12:00",
+            "features": [
+                "elevator",
+                "wifi",
+                "parking"
+            ],
+            "description": "",
+            "photos": [
+                "http://o0.github.io/assets/images/tokyo/hotel1.jpg",
+                "http://o0.github.io/assets/images/tokyo/hotel2.jpg",
+                "http://o0.github.io/assets/images/tokyo/hotel3.jpg"
+            ]
+        },
+        "location": {
+            "x": 731,
+            "y": 221
+        },
+        "date": 1538950921337
+    },
+    {
+        "author": {
+            "avatar": "https://robohash.org/4t1zdwa0Wh"
+        },
+        "offer": {
+            "title": "Огромный прекрасный дворец",
+            "address": "745, 150",
+            "price": 257391,
+            "type": "house",
+            "rooms": 4,
+            "guests": 3,
+            "checkin": "14:00",
+            "checkout": "13:00",
+            "features": [],
+            "description": "",
+            "photos": [
+                "http://o0.github.io/assets/images/tokyo/hotel1.jpg",
+                "http://o0.github.io/assets/images/tokyo/hotel2.jpg",
+                "http://o0.github.io/assets/images/tokyo/hotel3.jpg"
+            ]
+        },
+        "location": {
+            "x": 745,
+            "y": 150
+        },
+        "date": 1538950921337
+    },
+    {
+        "author": {
+            "avatar": "https://robohash.org/2zDeDG0rOF"
+        },
+        "offer": {
+            "title": "Красивый гостевой домик",
+            "address": "640, 282",
+            "price": 979592,
+            "type": "palace",
+            "rooms": 2,
+            "guests": 4,
+            "checkin": "12:00",
+            "checkout": "12:00",
+            "features": [
+                "wifi",
+                "conditioner",
+                "elevator"
+            ],
+            "description": "",
+            "photos": [
+                "http://o0.github.io/assets/images/tokyo/hotel1.jpg",
+                "http://o0.github.io/assets/images/tokyo/hotel2.jpg",
+                "http://o0.github.io/assets/images/tokyo/hotel3.jpg"
+            ]
+        },
+        "location": {
+            "x": 640,
+            "y": 282
+        },
+        "date": 1538950921337
+    },
+    {
+        "author": {
+            "avatar": "https://robohash.org/kvlLY332P0"
+        },
+        "offer": {
+            "title": "Некрасивый негостеприимный домик",
+            "address": "712, 347",
+            "price": 187133,
+            "type": "flat",
+            "rooms": 3,
+            "guests": 2,
+            "checkin": "12:00",
+            "checkout": "14:00",
+            "features": [
+                "washer",
+                "dishwasher",
+                "parking"
+            ],
+            "description": "",
+            "photos": [
+                "http://o0.github.io/assets/images/tokyo/hotel1.jpg",
+                "http://o0.github.io/assets/images/tokyo/hotel2.jpg",
+                "http://o0.github.io/assets/images/tokyo/hotel3.jpg"
+            ]
+        },
+        "location": {
+            "x": 712,
+            "y": 347
+        },
+        "date": 1538950921337
+    }
+]

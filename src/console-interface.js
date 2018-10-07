@@ -76,7 +76,7 @@ const checkPath = (cmd) => {
 
 const fileRewrite = (cmd) => {
   if (cmd.trim() === `y`) {
-    createFile(cmd);
+    createFile();
   } else if (cmd.trim() === `n`) {
     rl.close();
     process.exit(0);
