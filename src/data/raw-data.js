@@ -1,6 +1,6 @@
 'use strict';
 
-const placeTitle = [
+const placeTitles = [
   `Большая уютная квартира`,
   `Маленькая неуютная квартира`,
   `Огромный прекрасный дворец`,
@@ -11,7 +11,7 @@ const placeTitle = [
   `Неуютное бунгало по колено в воде`
 ];
 
-const placeType = [
+const placeTypes = [
   `flat`,
   `palace`,
   `house`,
@@ -40,5 +40,5 @@ const photos = [
 ];
 
 module.exports = {
-  placeTitle, placeType, time, features, photos
+  placeTitles, placeTypes, time, features, photos
 };

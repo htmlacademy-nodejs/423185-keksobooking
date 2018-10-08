@@ -10,17 +10,17 @@ const generateRandomString = (setLength) => {
   return text;
 };
 
-const generateDate = () => {
-  const sevenDays = 604800;
-  const currentDate = Date.now();
-
-  return currentDate - sevenDays;
-};
-
 const generateRandomInteger = (min, max) => {
   let rand = min - 0.5 + Math.random() * (max - min + 1);
   rand = Math.round(rand);
   return rand;
+};
+
+const generateDate = () => {
+  const sevenDays = 86400000;
+  const currentDate = Date.now();
+
+  return generateRandomInteger(currentDate, currentDate - sevenDays);
 };
 
 const shuffle = (array) => {
@@ -36,6 +36,8 @@ const shuffle = (array) => {
   return array;
 };
 
+const randomChoice = (arr) => arr[generateRandomInteger(0, arr.length - 1)];
+
 module.exports = {
-  generateRandomString, generateDate, generateRandomInteger, shuffle
+  generateRandomString, generateDate, generateRandomInteger, shuffle, randomChoice
 };

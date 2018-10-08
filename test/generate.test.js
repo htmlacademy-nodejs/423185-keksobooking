@@ -5,109 +5,149 @@ const fs = require(`fs`);
 const path = require(`path`);
 const generate = require(`../src/generator/generate`);
 const data = require(`../src/data/raw-data`);
+const generateEntity = require(`../src/data/entity.js`);
+
 const TEMP_DIR = __dirname;
 let file = ``;
+const object = generateEntity();
 
-const generateFile = () => {
-  return new Promise((success, fail) => {
-    generate.execute(TEMP_DIR).then(() => {
-      fs.readFile(path.join(TEMP_DIR, `/generated-data.json`), `utf8`, (err, fd) => {
-        file = JSON.parse(fd);
+const writeFile = (itemsNumber) => {
+  return new Promise((success) => {
+    generate.execute(TEMP_DIR, itemsNumber)
+    .then(() => {
+      fs.access(path.join(TEMP_DIR, `generated-data.json`), () => {
         success();
-        if (err) {
-          fail();
-        }
       });
     });
   });
 };
 
-describe(`Generate function`, () => {
-  before((done) => {
-    generateFile().then(() => {
-      done();
-    });
-  });
-
-  it(`Should create file in exact folder`, (done) => {
-    fs.access(path.join(TEMP_DIR, `/generated-data.json`), (err) => {
+const readFile = () => {
+  return new Promise((success, fail) => {
+    fs.readFile(path.join(TEMP_DIR, `generated-data.json`), `utf8`, (err, fd) => {
+      file = JSON.parse(fd);
+      success();
       if (err) {
-        assert.fail(err);
+        fail();
       }
-      done();
+    });
+  });
+};
+
+describe(`Generate function`, () => {
+  it(`Should create file in exact folder`, () => {
+    return writeFile(1)
+    .catch((err) => {
+      assert.fail(err);
     });
   });
 
-  it(`Should create file with author, offer, location and date properties`, () => {
-    assert.ok(file.author);
-    assert.ok(file.offer);
-    assert.ok(file.location);
-    assert.ok(file.date);
+  it(`Should successfully rewrite file`, () => {
+    return writeFile(1)
+    .then(() => {
+      writeFile(1);
+    })
+    .catch((err) => {
+      assert.fail(err);
+    });
   });
 
+  it(`Should create file with array length, depending on the set argument`, () => {
+    return writeFile(12)
+    .then(() => {
+      return readFile();
+    })
+    .then(() => {
+      assert.ok(file.length === 12);
+    })
+    .catch((err) => {
+      assert.fail(err);
+    });
+  });
+
+  it(`Should create file with author, offer, location and date properties in an object`, () => {
+    return writeFile(5)
+    .then(() => {
+      readFile();
+    })
+    .then(() => {
+      assert.ok(file[2].author);
+      assert.ok(file[2].offer);
+      assert.ok(file[2].location);
+      assert.ok(file[2].date);
+    })
+    .catch((err) => {
+      assert.fail(err);
+    });
+  });
+});
+
+
+describe(`Generated object in an array`, () => {
   it(`Author property should contain avatar property`, () => {
-    assert.ok(file.author.avatar);
+    assert.ok(object.author.avatar);
   });
 
   it(`Location property x and y shoud have correct values`, () => {
-    assert.ok(file.location.x > 300 && file.location.x < 900);
-    assert.ok(file.location.y > 150 && file.location.y < 500);
+    assert.ok(object.location.x >= 300 && object.location.x <= 900);
+    assert.ok(object.location.y >= 150 && object.location.y <= 500);
   });
 
   it(`Date property should be in a time stamp format`, () => {
     const date = new Date();
-    assert.ok(date.setTime(file.date));
+    assert.ok(date.setTime(object.date));
   });
 
   it(`Offer property should have correct price`, () => {
-    assert.ok(file.offer.price > 1000 && file.offer.price < 1000000);
+    assert.ok(object.offer.price >= 1000 && object.offer.price <= 1000000);
   });
 
   it(`Offer property should have correct type`, () => {
-    const types = data.placeType;
-    assert.ok(types.find((item) => item === file.offer.type));
+    const types = data.placeTypes;
+    assert.ok(types.find((item) => item === object.offer.type));
   });
 
   it(`Offer property should have correct address`, () => {
-    assert.ok(typeof file.offer.address === `string`);
+    assert.ok(typeof object.offer.address === `string`);
   });
 
   it(`Offer property should have correct title`, () => {
-    const types = data.placeTitle;
-    assert.ok(types.find((item) => item === file.offer.title));
+    const types = data.placeTitles;
+    assert.ok(types.find((item) => item === object.offer.title));
   });
 
   it(`Offer property should have correct rooms size`, () => {
-    assert.ok(file.offer.rooms >= 1 && file.offer.rooms <= 5);
+    assert.ok(object.offer.rooms >= 1 && object.offer.rooms <= 5);
 
   });
 
   it(`Offer property should have correct guests number`, () => {
-    assert.ok(file.offer.guests >= 1 && file.offer.guests <= 5);
+    assert.ok(object.offer.guests >= 1 && object.offer.guests <= 5);
   });
 
   it(`Offer property should have correct checkin and checkout time`, () => {
     const types = data.time;
-    assert.ok(types.find((item) => item === file.offer.checkin));
-    assert.ok(types.find((item) => item === file.offer.checkout));
+    assert.ok(types.find((item) => item === object.offer.checkin));
+    assert.ok(types.find((item) => item === object.offer.checkout));
   });
 
   it(`Offer property should have correct features`, () => {
     const types = data.features;
-    assert.ok(file.offer.features.every((item) => types.includes(item)));
+    assert.ok(object.offer.features.every((item) => types.includes(item)));
   });
 
   it(`Offer property should have empty description`, () => {
-    assert.ok(file.offer.description === ``);
+    assert.ok(object.offer.description === ``);
   });
 
   it(`Offer property should have photos array`, () => {
     const photos = data.photos;
-    assert.ok((photos.sort().join(`,`) === file.offer.photos.sort().join(`,`)));
+    assert.ok((photos.sort().join(`,`) === object.offer.photos.sort().join(`,`)));
   });
 
   after((done) => {
-    fs.unlink(`${TEMP_DIR}/generated-data.json`);
-    done();
+    fs.unlink(path.join(TEMP_DIR, `generated-data.json`), () => {
+      done();
+    });
   });
 });
