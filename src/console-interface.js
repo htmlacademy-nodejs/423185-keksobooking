@@ -59,7 +59,7 @@ const checkPath = (rl, cmd) => {
       const fileExists = files.find((item) => item === `generatedData.json`);
       if (!fileExists) {
         data.path = cmd;
-        createFile();
+        createFile(rl);
       } else {
         regime = `File rewrite`;
         rl.setPrompt(`Файл уже существует. Перезаписать?\n`);
@@ -71,7 +71,7 @@ const checkPath = (rl, cmd) => {
 
 const fileRewrite = (rl, cmd) => {
   if (cmd.trim() === `y`) {
-    createFile();
+    createFile(rl);
   } else if (cmd.trim() === `n`) {
     rl.close();
     process.exit(0);
