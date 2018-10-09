@@ -8,28 +8,26 @@ const data = require(`../src/data/raw-data`);
 const generateEntity = require(`../src/data/entity.js`);
 
 const TEMP_DIR = __dirname;
-let file = ``;
 const object = generateEntity();
 
 const writeFile = (itemsNumber) => {
   return new Promise((success) => {
     generate.execute(TEMP_DIR, itemsNumber)
-    .then(() => {
-      fs.access(path.join(TEMP_DIR, `generated-data.json`), () => {
-        success();
+      .then(() => {
+        fs.access(path.join(TEMP_DIR, `generated-data.json`), () => {
+          success();
+        });
       });
-    });
   });
 };
 
 const readFile = () => {
   return new Promise((success, fail) => {
     fs.readFile(path.join(TEMP_DIR, `generated-data.json`), `utf8`, (err, fd) => {
-      file = JSON.parse(fd);
-      success();
       if (err) {
-        fail();
+        return fail(err);
       }
+      return success(JSON.parse(fd));
     });
   });
 };
@@ -37,48 +35,48 @@ const readFile = () => {
 describe(`Generate function`, () => {
   it(`Should create file in exact folder`, () => {
     return writeFile(1)
-    .catch((err) => {
-      assert.fail(err);
-    });
+      .catch((err) => {
+        assert.fail(err);
+      });
   });
 
   it(`Should successfully rewrite file`, () => {
     return writeFile(1)
-    .then(() => {
-      writeFile(1);
-    })
-    .catch((err) => {
-      assert.fail(err);
-    });
+      .then(() => {
+        writeFile(1);
+      })
+      .catch((err) => {
+        assert.fail(err);
+      });
   });
 
   it(`Should create file with array length, depending on the set argument`, () => {
     return writeFile(12)
-    .then(() => {
-      return readFile();
-    })
-    .then(() => {
-      assert.ok(file.length === 12);
-    })
-    .catch((err) => {
-      assert.fail(err);
-    });
+      .then(() => {
+        return readFile();
+      })
+      .then((fileData) => {
+        assert.ok(fileData.length === 12);
+      })
+      .catch((err) => {
+        assert.fail(err);
+      });
   });
 
   it(`Should create file with author, offer, location and date properties in an object`, () => {
     return writeFile(5)
-    .then(() => {
-      readFile();
-    })
-    .then(() => {
-      assert.ok(file[2].author);
-      assert.ok(file[2].offer);
-      assert.ok(file[2].location);
-      assert.ok(file[2].date);
-    })
-    .catch((err) => {
-      assert.fail(err);
-    });
+      .then(() => {
+        return readFile();
+      })
+      .then((fileData) => {
+        assert.ok(fileData[2].author);
+        assert.ok(fileData[2].offer);
+        assert.ok(fileData[2].location);
+        assert.ok(fileData[2].date);
+      })
+      .catch((err) => {
+        assert.fail(err);
+      });
   });
 });
 

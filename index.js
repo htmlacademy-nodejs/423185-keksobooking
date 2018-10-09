@@ -21,6 +21,7 @@ if (value) {
   const command = commands.find((item) => value === `--${item.name}`);
   if (command) {
     command.execute(commands);
+    process.exit(0);
   } else {
     console.error(showError(value));
     process.exit(1);

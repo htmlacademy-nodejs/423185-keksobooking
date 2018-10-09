@@ -6,18 +6,13 @@ const fs = require(`fs`);
 const generate = require(`./generator/generate`);
 const defaultMessage = require(`./default`);
 
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
-
 let regime = `Approve not granted`;
 let data = {
   count: 0,
   path: ``
 };
 
-const createFile = () => {
+const createFile = (rl) => {
   generate.execute(data.path, data.count).then(() => {
     rl.setPrompt(`Элементы созданы!\n`);
     rl.prompt();
@@ -26,7 +21,7 @@ const createFile = () => {
   });
 };
 
-const getApprove = (cmd) => {
+const getApprove = (rl, cmd) => {
   if (cmd.trim() === `y`) {
     regime = `Approve granted`;
     rl.setPrompt(`Cколько элементов нужно создать?\n`);
@@ -40,7 +35,7 @@ const getApprove = (cmd) => {
   }
 };
 
-const setupGeneration = (cmd) => {
+const setupGeneration = (rl, cmd) => {
   if (parseInt(cmd, 10) && cmd >= 1 && cmd <= 20) {
     regime = `Path setup`;
     data.count = parseInt(cmd, 10);
@@ -55,7 +50,7 @@ const setupGeneration = (cmd) => {
   }
 };
 
-const checkPath = (cmd) => {
+const checkPath = (rl, cmd) => {
   fs.readdir(cmd, (err, files) => {
     if (err) {
       rl.setPrompt(`Нужно указать корректный путь\n`);
@@ -74,7 +69,7 @@ const checkPath = (cmd) => {
   });
 };
 
-const fileRewrite = (cmd) => {
+const fileRewrite = (rl, cmd) => {
   if (cmd.trim() === `y`) {
     createFile();
   } else if (cmd.trim() === `n`) {
@@ -87,21 +82,26 @@ const fileRewrite = (cmd) => {
 };
 
 const createConsoleInterface = () => {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+  });
+
   rl.setPrompt(defaultMessage.execute());
   rl.prompt();
   rl.on(`line`, (command) => {
     switch (regime) {
       case `Approve not granted`:
-        getApprove(command);
+        getApprove(rl, command);
         break;
       case `Approve granted`:
-        setupGeneration(command);
+        setupGeneration(rl, command);
         break;
       case `Path setup`:
-        checkPath(command);
+        checkPath(rl, command);
         break;
       case `File rewrite`:
-        fileRewrite(command);
+        fileRewrite(rl, command);
         break;
     }
   });
