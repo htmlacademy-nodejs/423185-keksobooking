@@ -1,6 +1,7 @@
 'use strict';
 
 const colors = require(`colors`);
+
 const commands = [
   require(`./src/author`),
   require(`./src/description`),
@@ -8,7 +9,8 @@ const commands = [
   require(`./src/version`),
   require(`./src/help`)
 ];
-const defaultMessage = require(`./src/default`);
+
+const createConsoleInterface = require(`./src/console-interface`);
 
 const showError = (com) =>
   colors.red(`Неизвестная команда ${com}.\n Чтобы прочитать правила использования приложения, наберите '--help'`);
@@ -19,12 +21,11 @@ if (value) {
   const command = commands.find((item) => value === `--${item.name}`);
   if (command) {
     command.execute(commands);
+    process.exit(0);
   } else {
     console.error(showError(value));
     process.exit(1);
   }
 } else {
-  defaultMessage.execute(commands);
+  createConsoleInterface();
 }
-
-process.exit(0);
