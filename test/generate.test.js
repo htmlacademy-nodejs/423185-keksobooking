@@ -13,7 +13,7 @@ console.log(`1`);
 
 const writeFile = (itemsNumber) => {
   return new Promise((success) => {
-    generate.execute(TEMP_DIR, itemsNumber)
+    generate.execute(path.join(TEMP_DIR, `generated-data.json`), itemsNumber)
       .then(() => {
         fs.access(path.join(TEMP_DIR, `generated-data.json`), () => {
           success();
