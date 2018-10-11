@@ -7,7 +7,8 @@ const commands = [
   require(`./src/description`),
   require(`./src/license`),
   require(`./src/version`),
-  require(`./src/help`)
+  require(`./src/help`),
+  require(`./src/server`)
 ];
 
 const createConsoleInterface = require(`./src/console-interface`);
@@ -21,7 +22,7 @@ if (value) {
   const command = commands.find((item) => value === `--${item.name}`);
   if (command) {
     command.execute(commands);
-    process.exit(0);
+    // process.exit(0);
   } else {
     console.error(showError(value));
     process.exit(1);
