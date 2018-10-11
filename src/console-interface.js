@@ -2,6 +2,7 @@
 
 const readline = require(`readline`);
 const fs = require(`fs`);
+const path = require(`path`);
 
 const generate = require(`./generator/generate`);
 const defaultMessage = require(`./default`);
@@ -51,14 +52,22 @@ const setupGeneration = (rl, cmd) => {
 };
 
 const checkPath = (rl, cmd) => {
-  fs.readdir(cmd, (err, files) => {
+  const parsedPath = path.parse(cmd);
+  const fileDir = parsedPath.dir ? parsedPath.dir : `/`;
+  const fileExt = parsedPath.ext;
+  const fileBase = parsedPath.base;
+
+  fs.readdir(fileDir, (err, files) => {
     if (err) {
-      rl.setPrompt(`Нужно указать корректный путь\n`);
+      rl.setPrompt(`Нужно указать корректный путь до файла\n`);
+      rl.prompt();
+    } else if (fileExt !== `.json`) {
+      rl.setPrompt(`Нужно указать файл в формате .json\n`);
       rl.prompt();
     } else {
-      const fileExists = files.find((item) => item === `generatedData.json`);
+      const fileExists = files.find((item) => item === fileBase);
+      data.path = cmd;
       if (!fileExists) {
-        data.path = cmd;
         createFile(rl);
       } else {
         regime = `File rewrite`;
