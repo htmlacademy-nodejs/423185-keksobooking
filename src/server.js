@@ -17,6 +17,7 @@ const mimes = {
   ".js": `application/javascript`,
   ".json": `application/json`,
   ".png": `image/png`,
+  ".svg": `image/svg`,
   ".ico": `image/x-icon`
 };
 
@@ -47,32 +48,23 @@ const showMarkup = (filePath, files) => {
   </html>`;
 };
 
-const sendFile = (file, res) => {
-  file.pipe(res);
-
-  file.on(`error`, () => {
-    res.writeHead(404, `Not Found`);
-    res.end();
-  });
-
-  res.on(`close`, () => {
-    file.destroy();
-  });
-};
-
 const showFile = (filePath, res) => {
-  return new Promise(() => {
-    const file = fs.createReadStream(filePath);
-    return sendFile(file, res);
+  return new Promise((success) => {
+    fs.readFile(filePath, (err, files) => {
+      success(files);
+    });
   })
     .then((fd) => {
       const extension = path.parse(filePath).ext;
-      res.setHeader(`content-type`, mimes[extension]);
+      const data = fd.toString(`utf8`);
+      const length = Buffer.from(data, `utf8`).length;
+      res.setHeader(`Content-Type`, mimes[extension]);
+      res.setHeader(`Content-Length`, length);
       res.end(fd);
     })
     .catch((e) => {
       res.writeHead(500, e.message, {'content-type': `text/plain`});
-      res.end(e.message);
+      res.end(`500 Something went wrong`);
     });
 };
 
@@ -89,7 +81,7 @@ const showDirectory = (filePathAbosulte, filePathRelative, res) => {
     })
     .catch((e) => {
       res.writeHead(500, e.message, {'content-type': `text/plain`});
-      res.end(e.message);
+      res.end(`500 Something went wrong`);
     });
 };
 
@@ -104,7 +96,7 @@ const serverHandler = (req, res) => {
     fs.stat(absolutePath, (err, stats) => {
       if (err) {
         res.writeHead(404, `Not Found`);
-        res.end();
+        res.end(`404 Not Found`);
       }
       res.statusCode = 200;
       res.statusMessage = `OK`;
@@ -120,7 +112,7 @@ const serverHandler = (req, res) => {
     })
     .catch((e) => {
       res.writeHead(500, e.message, {'content-type': `text/plain`});
-      res.end(e.message);
+      res.end(`500 Something went wrong`);
     });
 };
 
