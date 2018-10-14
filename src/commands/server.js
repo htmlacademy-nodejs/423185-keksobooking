@@ -7,7 +7,6 @@ const fs = require(`fs`);
 
 const HOST_NAME = `127.0.0.1`;
 const DEFAULT_PORT = 3000;
-const CURRENT_DIR = __dirname;
 const mimes = {
   ".html": `text/html; charset=UTF-8`,
   ".css": `text/css`,
@@ -31,7 +30,7 @@ const checkPort = () => {
   }
 };
 
-const showMarkup = (filePath, files) => {
+const showDirectoryContents = (filePath, files) => {
   return `<!DOCTYPE html>
   <html lang="en">
   <head>
@@ -56,14 +55,13 @@ const showFile = (filePath, res) => {
   })
     .then((fd) => {
       const extension = path.parse(filePath).ext;
-      const data = fd.toString(`utf8`);
-      const length = Buffer.from(data, `utf8`).length;
+      const length = Buffer.from(fd, `utf8`).length;
       res.setHeader(`Content-Type`, mimes[extension]);
       res.setHeader(`Content-Length`, length);
       res.end(fd);
     })
     .catch((e) => {
-      res.writeHead(500, e.message, {'content-type': `text/plain`});
+      res.writeHead(500, e.message, { 'content-type': `text/plain` });
       res.end(`500 Something went wrong`);
     });
 };
@@ -76,11 +74,11 @@ const showDirectory = (filePathAbosulte, filePathRelative, res) => {
   })
     .then((files) => {
       res.setHeader(`content-type`, `text\html`);
-      const markup = showMarkup(filePathRelative, files);
+      const markup = showDirectoryContents(filePathRelative, files);
       res.end(markup);
     })
     .catch((e) => {
-      res.writeHead(500, e.message, {'content-type': `text/plain`});
+      res.writeHead(500, e.message, { 'content-type': `text/plain` });
       res.end(`500 Something went wrong`);
     });
 };
@@ -90,8 +88,7 @@ const serverHandler = (req, res) => {
   if (localPath === `/`) {
     localPath = `/index.html`;
   }
-
-  const absolutePath = path.join(CURRENT_DIR, `../static`, localPath);
+  const absolutePath = path.join(`./static`, localPath);
   return new Promise((success) => {
     fs.stat(absolutePath, (err, stats) => {
       if (err) {
@@ -111,7 +108,7 @@ const serverHandler = (req, res) => {
       }
     })
     .catch((e) => {
-      res.writeHead(500, e.message, {'content-type': `text/plain`});
+      res.writeHead(500, e.message, { 'content-type': `text/plain` });
       res.end(`500 Something went wrong`);
     });
 };

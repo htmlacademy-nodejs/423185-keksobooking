@@ -3,12 +3,12 @@
 const colors = require(`colors`);
 
 const commands = [
-  require(`./src/author`),
-  require(`./src/description`),
-  require(`./src/license`),
-  require(`./src/version`),
-  require(`./src/help`),
-  require(`./src/server`)
+  require(`./src/commands/author`),
+  require(`./src/commands/description`),
+  require(`./src/commands/license`),
+  require(`./src/commands/version`),
+  require(`./src/commands/help`),
+  require(`./src/commands/server`)
 ];
 
 const createConsoleInterface = require(`./src/console-interface`);
