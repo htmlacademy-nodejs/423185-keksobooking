@@ -61,7 +61,7 @@ const showFile = (filePath, res) => {
       res.end(fd);
     })
     .catch((e) => {
-      res.writeHead(500, e.message, { 'content-type': `text/plain` });
+      res.writeHead(500, e.message, {'content-type': `text/plain`});
       res.end(`500 Something went wrong`);
     });
 };
@@ -78,7 +78,7 @@ const showDirectory = (filePathAbosulte, filePathRelative, res) => {
       res.end(markup);
     })
     .catch((e) => {
-      res.writeHead(500, e.message, { 'content-type': `text/plain` });
+      res.writeHead(500, e.message, {'content-type': `text/plain`});
       res.end(`500 Something went wrong`);
     });
 };
@@ -108,7 +108,7 @@ const serverHandler = (req, res) => {
       }
     })
     .catch((e) => {
-      res.writeHead(500, e.message, { 'content-type': `text/plain` });
+      res.writeHead(500, e.message, {'content-type': `text/plain`});
       res.end(`500 Something went wrong`);
     });
 };
