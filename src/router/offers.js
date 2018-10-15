@@ -12,7 +12,7 @@ const util = require(`../data/util`);
 const offers = generate.getData(28);
 
 const queryCheck = (query) => {
-  if (!parseInt(query, 10) || query < 0) {
+  if ((!isFinite(query) && query !== parseInt(query, 10)) || query < 0) {
     throw new InvalidParameterError(`Invalid parameter error`);
   } else {
     return parseInt(query, 10);
@@ -24,11 +24,11 @@ offersRouter.get(`/offers`, (req, res) => {
   const skip = req.query.skip ? queryCheck(req.query.skip) : ``;
   let modifiedOffers = [...offers];
 
-  if (limit) {
-    modifiedOffers.length = limit > offers.length ? offers.length : limit;
-  }
   if (skip) {
     modifiedOffers = offers.slice(skip);
+  }
+  if (limit) {
+    modifiedOffers.length = limit > modifiedOffers.length ? modifiedOffers.length : limit;
   }
 
   res.send(modifiedOffers);
