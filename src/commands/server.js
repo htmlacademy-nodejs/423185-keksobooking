@@ -1,24 +1,10 @@
 "use strict";
 
-const http = require(`http`);
-const url = require(`url`);
-const path = require(`path`);
-const fs = require(`fs`);
+const express = require(`express`);
+const offersRouter = require(`../router/offers`);
+const app = express();
 
-const HOST_NAME = `127.0.0.1`;
 const DEFAULT_PORT = 3000;
-const mimes = {
-  ".html": `text/html; charset=UTF-8`,
-  ".css": `text/css`,
-  ".gif": `image/gif`,
-  ".jpg": `image/jpeg`,
-  ".jpeg": `image/jpeg`,
-  ".js": `application/javascript`,
-  ".json": `application/json`,
-  ".png": `image/png`,
-  ".svg": `image/svg`,
-  ".ico": `image/x-icon`
-};
 
 const checkPort = () => {
   const args = process.argv.slice(2);
@@ -30,99 +16,24 @@ const checkPort = () => {
   }
 };
 
-const showDirectoryContents = (filePath, files) => {
-  return `<!DOCTYPE html>
-  <html lang="en">
-  <head>
-      <meta charset="UTF-8">
-      <title>Directory content</title>
-  </head>
-  <body>
-  <ul>
-      ${files
-      .map((it) => `<li><a href="${filePath}/${it}">${it}</a></li>`)
-      .join(``)}
-  </ul>
-  </body>
-  </html>`;
-};
-
-const showFile = (filePath, res) => {
-  return new Promise((success) => {
-    fs.readFile(filePath, (err, files) => {
-      success(files);
-    });
-  })
-    .then((fd) => {
-      const extension = path.parse(filePath).ext;
-      const length = Buffer.from(fd, `utf8`).length;
-      res.setHeader(`Content-Type`, mimes[extension]);
-      res.setHeader(`Content-Length`, length);
-      res.end(fd);
-    })
-    .catch((e) => {
-      res.writeHead(500, e.message, {'content-type': `text/plain`});
-      res.end(`500 Something went wrong`);
-    });
-};
-
-const showDirectory = (filePathAbosulte, filePathRelative, res) => {
-  return new Promise((success) => {
-    fs.readdir(filePathAbosulte, (err, files) => {
-      success(files);
-    });
-  })
-    .then((files) => {
-      res.setHeader(`content-type`, `text\html`);
-      const markup = showDirectoryContents(filePathRelative, files);
-      res.end(markup);
-    })
-    .catch((e) => {
-      res.writeHead(500, e.message, {'content-type': `text/plain`});
-      res.end(`500 Something went wrong`);
-    });
-};
-
-const serverHandler = (req, res) => {
-  let localPath = url.parse(req.url).pathname;
-  if (localPath === `/`) {
-    localPath = `/index.html`;
+const ERROR_HANDLER = (err, req, res, _next) => {
+  console.log(err);
+  if (err.code === 404) {
+    res.status(404).send(`Page not found`);
+  } else {
+    console.error(err);
+    res.status(err.code || 500).send(err.message);
   }
-  const absolutePath = path.join(`./static`, localPath);
-  return new Promise((success) => {
-    fs.stat(absolutePath, (err, stats) => {
-      if (err) {
-        res.writeHead(404, `Not Found`);
-        res.end(`404 Not Found`);
-      }
-      res.statusCode = 200;
-      res.statusMessage = `OK`;
-      success(stats);
-    });
-  })
-    .then((data) => {
-      if (data.isDirectory()) {
-        showDirectory(absolutePath, localPath, res);
-      } else if (data.isFile()) {
-        showFile(absolutePath, res);
-      }
-    })
-    .catch((e) => {
-      res.writeHead(500, e.message, {'content-type': `text/plain`});
-      res.end(`500 Something went wrong`);
-    });
 };
+
+app.use(express.static(`./static`));
+
+app.use(`/api`, offersRouter);
+
+app.use(ERROR_HANDLER);
 
 const launchServer = (port) => {
-  const server = http.createServer();
-  server.on(`request`, serverHandler);
-  server.listen(port, HOST_NAME, (err) => {
-    if (err) {
-      console.error(err);
-      process.exit(1);
-    }
-    console.log(`Server launched!\nConnect: http://${HOST_NAME}:${port}`);
-  });
+  app.listen(port, () => console.log(`Server launched!\nConnect: http://localhost:${port}`));
 };
 
 module.exports = {
