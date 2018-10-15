@@ -5,7 +5,7 @@ const fs = require(`fs`);
 const path = require(`path`);
 
 const generate = require(`./generator/generate`);
-const defaultMessage = require(`./default`);
+const defaultMessage = require(`./commands/default`);
 
 let regime = `Approve not granted`;
 let data = {

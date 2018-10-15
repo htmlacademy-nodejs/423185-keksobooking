@@ -3,11 +3,12 @@
 const colors = require(`colors`);
 
 const commands = [
-  require(`./src/author`),
-  require(`./src/description`),
-  require(`./src/license`),
-  require(`./src/version`),
-  require(`./src/help`)
+  require(`./src/commands/author`),
+  require(`./src/commands/description`),
+  require(`./src/commands/license`),
+  require(`./src/commands/version`),
+  require(`./src/commands/help`),
+  require(`./src/commands/server`)
 ];
 
 const createConsoleInterface = require(`./src/console-interface`);
@@ -21,7 +22,7 @@ if (value) {
   const command = commands.find((item) => value === `--${item.name}`);
   if (command) {
     command.execute(commands);
-    process.exit(0);
+    // process.exit(0);
   } else {
     console.error(showError(value));
     process.exit(1);
