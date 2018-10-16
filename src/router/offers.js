@@ -47,7 +47,7 @@ offersRouter.get(`/offers/:date`, (req, res) => {
   const parsedDate = parseInt(offerDate, 10);
   const date = offers.find((it) => it.date === parsedDate);
   if (!date) {
-    throw new NotFoundError(`No offers were found at"${convertedDate}"`);
+    throw new NotFoundError(`No offers were found at "${convertedDate}"`);
   }
 
   res.send(date);
