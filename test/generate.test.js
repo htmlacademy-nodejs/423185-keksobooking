@@ -5,10 +5,10 @@ const fs = require(`fs`);
 const path = require(`path`);
 const generate = require(`../src/generator/generate`);
 const data = require(`../src/data/raw-data`);
-const generateEntity = require(`../src/data/entity.js`);
+const entity = require(`../src/data/entity`);
 
 const TEMP_DIR = __dirname;
-const object = generateEntity();
+const object = entity.generateEntity();
 
 const writeFile = (itemsNumber) => {
   return new Promise((success) => {

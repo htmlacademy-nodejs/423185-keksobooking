@@ -7,7 +7,7 @@ const IllegalArgumentError = require(`../errors/illegal-argument-error`);
 const IlliegalDateError = require(`../errors/illegal-date-error`);
 const InvalidParameterError = require(`../errors/illegal-date-error`);
 const NotFoundError = require(`../errors/not-found-error`);
-const generate = require(`../generator/generate`);
+const entity = require(`../data/entity`);
 const util = require(`../data/util`);
 const multer = require(`multer`);
 
@@ -15,7 +15,8 @@ const storage = multer.memoryStorage();
 const upload = multer({storage});
 const jsonParser = express.json();
 
-const offers = generate.getData(28);
+const ENTITIES_COUNT = 28;
+const offers = entity.generateMultipleEntities(ENTITIES_COUNT);
 
 const queryCheck = (query) => {
   if ((!isFinite(query) && query !== parseInt(query, 10)) || query < 0) {

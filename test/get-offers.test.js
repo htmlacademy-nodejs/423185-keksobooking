@@ -5,7 +5,7 @@ const assert = require(`assert`);
 const util = require(`../src/data/util`);
 const app = require(`../src/commands/server`).app;
 
-let offer;
+const ENTITIES_COUNT = 28;
 
 describe(`GET /api/offers`, () => {
   it(`get all offers`, () => {
@@ -15,12 +15,7 @@ describe(`GET /api/offers`, () => {
       .expect(200)
       .expect(`Content-Type`, /json/)
       .then((response) => {
-        assert.deepEqual(response.body.length, 28);
-      })
-      .catch((err) => {
-        if (err) {
-          throw err;
-        }
+        assert.deepEqual(response.body.length, ENTITIES_COUNT);
       });
   });
 
@@ -32,11 +27,6 @@ describe(`GET /api/offers`, () => {
       .expect(`Content-Type`, /json/)
       .then((response) => {
         assert.deepEqual(response.body.length, 5);
-      })
-      .catch((err) => {
-        if (err) {
-          throw err;
-        }
       });
   });
 
@@ -48,11 +38,6 @@ describe(`GET /api/offers`, () => {
       .expect(`Content-Type`, /json/)
       .then((response) => {
         assert.deepEqual(response.body.length, 3);
-      })
-      .catch((err) => {
-        if (err) {
-          throw err;
-        }
       });
   });
 
@@ -64,11 +49,6 @@ describe(`GET /api/offers`, () => {
       .expect(`Content-Type`, /json/)
       .then((response) => {
         assert.deepEqual(response.body.length, 3);
-      })
-      .catch((err) => {
-        if (err) {
-          throw err;
-        }
       });
   });
 
@@ -102,6 +82,8 @@ describe(`GET /api/offers`, () => {
 });
 
 describe(`GET /api/offers/:date`, () => {
+  let offer;
+
   before(() => {
     return request(app)
       .get(`/api/offers`)
@@ -127,10 +109,7 @@ describe(`GET /api/offers/:date`, () => {
       set(`Accept`, `application/json`).
       expect(404).
       expect(`No offers were found at "${util.timestampToDate(971723378)}"`).
-      expect(`Content-Type`, /html/)
-      .catch((err) => {
-        throw err;
-      });
+      expect(`Content-Type`, /html/);
   });
 
   it(`get unknown offer with incorrect date`, () => {

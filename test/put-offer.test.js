@@ -16,11 +16,6 @@ describe(`POST /api/offers`, () => {
       .expect(`Content-Type`, /json/)
       .then((response) => {
         assert.deepEqual(response.body, offerTitle);
-      })
-      .catch((err) => {
-        if (err) {
-          throw err;
-        }
       });
   });
 
@@ -34,11 +29,6 @@ describe(`POST /api/offers`, () => {
       .expect(`Content-Type`, /json/)
       .then((response) => {
         assert.deepEqual(response.body, offerTitle);
-      })
-      .catch((err) => {
-        if (err) {
-          throw err;
-        }
       });
   });
 
@@ -53,11 +43,6 @@ describe(`POST /api/offers`, () => {
       .expect(`Content-Type`, /json/)
       .then((response) => {
         assert.deepEqual(response.body, {title: offerTitle.title, photo: {name: `test.png`}});
-      })
-      .catch((err) => {
-        if (err) {
-          throw err;
-        }
       });
   });
 

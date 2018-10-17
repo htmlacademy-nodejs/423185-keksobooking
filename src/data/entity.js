@@ -30,9 +30,22 @@ const offer = () => {
   };
 };
 
-module.exports = () => ({
-  author: author(),
-  offer: offer(),
-  location: setLocation,
-  date: generateDate()
-});
+module.exports = {
+  generateEntity() {
+    return {
+      author: author(),
+      offer: offer(),
+      location: setLocation,
+      date: generateDate()
+    };
+  },
+
+  generateMultipleEntities(cnt) {
+    let dataArray = [];
+    for (let i = 0; i < cnt; i++) {
+      dataArray.push(this.generateEntity());
+    }
+
+    return dataArray;
+  }
+};
