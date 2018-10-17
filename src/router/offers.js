@@ -1,5 +1,6 @@
 "use strict";
 
+const express = require(`express`);
 // eslint-disable-next-line new-cap
 const offersRouter = require(`express`).Router();
 const IllegalArgumentError = require(`../errors/illegal-argument-error`);
@@ -8,6 +9,11 @@ const InvalidParameterError = require(`../errors/illegal-date-error`);
 const NotFoundError = require(`../errors/not-found-error`);
 const generate = require(`../generator/generate`);
 const util = require(`../data/util`);
+const multer = require(`multer`);
+
+const storage = multer.memoryStorage();
+const upload = multer({storage});
+const jsonParser = express.json();
 
 const offers = generate.getData(28);
 
@@ -52,5 +58,15 @@ offersRouter.get(`/offers/:date`, (req, res) => {
 
   res.send(date);
 });
+
+offersRouter.post(`/offers`, jsonParser, upload.single(`photo`), (req, res) => {
+  const body = req.body;
+  const photo = req.file;
+  if (photo) {
+    body.photo = {name: photo.originalname};
+  }
+  res.send(body);
+});
+
 
 module.exports = offersRouter;
