@@ -36,8 +36,17 @@ const shuffle = (array) => {
   return array;
 };
 
+const timestampToDate = (ts) => {
+  const d = new Date();
+  if (d.setTime(ts)) {
+    return (`0` + d.getDate()).slice(-2) + `.` + (`0` + (d.getMonth() + 1)).slice(-2) + `.` + d.getFullYear();
+  } else {
+    return false;
+  }
+};
+
 const randomChoice = (arr) => arr[generateRandomInteger(0, arr.length - 1)];
 
 module.exports = {
-  generateRandomString, generateDate, generateRandomInteger, shuffle, randomChoice
+  generateRandomString, generateDate, generateRandomInteger, shuffle, randomChoice, timestampToDate
 };
