@@ -1,8 +1,6 @@
 "use strict";
 
 const express = require(`express`);
-// eslint-disable-next-line new-cap
-const offersRouter = require(`express`).Router();
 const IllegalArgumentError = require(`../errors/illegal-argument-error`);
 const IlliegalDateError = require(`../errors/illegal-date-error`);
 const InvalidParameterError = require(`../errors/illegal-date-error`);
@@ -10,6 +8,8 @@ const NotFoundError = require(`../errors/not-found-error`);
 const entity = require(`../data/entity`);
 const util = require(`../data/util`);
 const multer = require(`multer`);
+// eslint-disable-next-line new-cap
+const offersRouter = express.Router();
 
 const storage = multer.memoryStorage();
 const upload = multer({storage});
