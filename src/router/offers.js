@@ -5,11 +5,13 @@ const IllegalArgumentError = require(`../errors/illegal-argument-error`);
 const IlliegalDateError = require(`../errors/illegal-date-error`);
 const InvalidParameterError = require(`../errors/illegal-date-error`);
 const NotFoundError = require(`../errors/not-found-error`);
+const ValidationError = require(`../errors/validation-error`);
 const entity = require(`../data/entity`);
 const util = require(`../data/util`);
 const multer = require(`multer`);
 
 const offersRouter = new express.Router();
+const validate = require(`./validate`);
 const storage = multer.memoryStorage();
 const upload = multer({storage});
 const jsonParser = express.json();
@@ -65,7 +67,14 @@ offersRouter.post(`/offers`, jsonParser, upload.single(`photo`), (req, res) => {
   if (photo) {
     body.photo = {name: photo.originalname};
   }
-  res.send(body);
+  res.send(validate(body));
+});
+
+offersRouter.use((err, req, res, _next) => {
+  if (err instanceof ValidationError) {
+    console.log(err);
+    res.status(err.code).json(err.errors);
+  }
 });
 
 
