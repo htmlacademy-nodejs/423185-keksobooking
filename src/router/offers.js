@@ -8,9 +8,8 @@ const NotFoundError = require(`../errors/not-found-error`);
 const entity = require(`../data/entity`);
 const util = require(`../data/util`);
 const multer = require(`multer`);
-// eslint-disable-next-line new-cap
-const offersRouter = express.Router();
 
+const offersRouter = new express.Router();
 const storage = multer.memoryStorage();
 const upload = multer({storage});
 const jsonParser = express.json();
