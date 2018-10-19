@@ -44,8 +44,8 @@ offersRouter.get(`/offers`, (req, res) => {
 
 offersRouter.get(`/offers/:date`, (req, res) => {
   const offerDate = req.params.date;
-
   const convertedDate = util.timestampToDate(offerDate);
+
   if (!offerDate) {
     throw new IllegalArgumentError(`No date was typed`);
   }
@@ -70,10 +70,12 @@ offersRouter.post(`/offers`, jsonParser, upload.single(`photo`), (req, res) => {
   res.send(validate(body));
 });
 
-offersRouter.use((err, req, res, _next) => {
+offersRouter.use((err, req, res, next) => {
   if (err instanceof ValidationError) {
-    console.log(err);
     res.status(err.code).json(err.errors);
+  } else {
+    console.log(err);
+    next(err);
   }
 });
 
