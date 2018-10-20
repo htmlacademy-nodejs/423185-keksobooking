@@ -9,7 +9,6 @@ const entity = require(`../src/data/entity`);
 
 const TEMP_DIR = __dirname;
 const object = entity.generateEntity();
-console.log(1);
 
 const writeFile = (itemsNumber) => {
   return new Promise((success) => {
@@ -98,7 +97,7 @@ describe(`Generated object in an array`, () => {
   });
 
   it(`Offer property should have correct price`, () => {
-    assert.ok(object.offer.price >= 1000 && object.offer.price <= 1000000);
+    assert.ok(object.offer.price > 0 && object.offer.price <= 1000000);
   });
 
   it(`Offer property should have correct type`, () => {
@@ -116,7 +115,7 @@ describe(`Generated object in an array`, () => {
   });
 
   it(`Offer property should have correct rooms size`, () => {
-    assert.ok(object.offer.rooms >= 1 && object.offer.rooms <= 5);
+    assert.ok(object.offer.rooms >= 0 && object.offer.rooms <= 1000);
 
   });
 

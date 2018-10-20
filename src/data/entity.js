@@ -18,9 +18,9 @@ const offer = () => {
   return {
     title: randomChoice(data.placeTitles),
     address: `${setLocation.x}, ${setLocation.y}`,
-    price: generateRandomInteger(1000, 1000000),
+    price: generateRandomInteger(0, 100000),
     type: randomChoice(data.placeTypes),
-    rooms: generateRandomInteger(1, 5),
+    rooms: generateRandomInteger(0, 1000),
     guests: generateRandomInteger(1, 5),
     checkin: randomChoice(data.time),
     checkout: randomChoice(data.time),
@@ -47,5 +47,22 @@ module.exports = {
     }
 
     return dataArray;
+  },
+
+  entityToNewOfferRequest(entity) {
+    return {
+      name: ``,
+      avatar: ``,
+      title: entity.offer.title,
+      address: entity.offer.address,
+      description: entity.offer.description,
+      price: entity.offer.price,
+      type: entity.offer.type,
+      rooms: entity.offer.rooms,
+      guests: entity.offer.guests,
+      checkin: entity.offer.checkin,
+      checkout: entity.offer.checkout,
+      features: entity.offer.features
+    };
   }
 };

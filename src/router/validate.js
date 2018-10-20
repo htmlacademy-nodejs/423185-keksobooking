@@ -24,7 +24,7 @@ const checkType = (type) => {
 };
 
 const checkPrice = (price) => {
-  return price > MIN_PRICE && price <= MAX_PRICE && typeof price === `number`;
+  return price > MIN_PRICE && price <= MAX_PRICE && parseInt(price, 10);
 };
 
 const checkAddress = (address) => {
@@ -32,8 +32,12 @@ const checkAddress = (address) => {
 };
 
 const checkTime = (time) => {
-  const matchArray = time.match(/^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/);
-  return matchArray.length === 4;
+  const matchArray = time.match(/^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/g);
+  if (matchArray) {
+    return true;
+  }
+  return false;
+
 };
 
 const checkRooms = (rooms) => {
@@ -43,6 +47,8 @@ const checkRooms = (rooms) => {
 const checkFeatures = (featuresInserted) => {
   if (!featuresInserted) {
     return true;
+  } else if (typeof featuresInserted === `string`) {
+    return features.includes(featuresInserted);
   } else {
     return featuresInserted.every((item) => features.includes(item));
   }
@@ -52,7 +58,7 @@ const checkImage = (avatar) => {
   if (!avatar) {
     return true;
   } else {
-    return imageMimes.find((item) => item === avatar.type);
+    return imageMimes.find((item) => item === avatar.mimetype);
   }
 };
 
@@ -66,37 +72,37 @@ const checkName = (name) => {
 
 const validate = (data) => {
   const errors = [];
-  if (!checkTitle(data.offer.title)) {
+  if (!checkTitle(data.title)) {
     errors.push(`The title should be a string with a length from 1 to 140 symbols`);
   }
-  if (!checkType(data.offer.type)) {
+  if (!checkType(data.type)) {
     errors.push(`Field name "type" must have correct value!`);
   }
-  if (!checkPrice(data.offer.price)) {
+  if (!checkPrice(data.price)) {
     errors.push(`The price should be from 0 to 100 000`);
   }
-  if (!checkAddress(data.offer.address)) {
+  if (!checkAddress(data.address)) {
     errors.push(`The address should be a string with a length not more than 100 symbols`);
   }
-  if (!checkTime(data.offer.checkin)) {
+  if (!checkTime(data.checkin)) {
     errors.push(`Checkin time should be in HH:mm format`);
   }
-  if (!checkTime(data.offer.checkout)) {
+  if (!checkTime(data.checkout)) {
     errors.push(`Checkout time should be in HH:mm format`);
   }
-  if (!checkRooms(data.offer.rooms)) {
+  if (!checkRooms(data.rooms)) {
     errors.push(`Rooms number should be countable with a length from 0 to 1000`);
   }
-  if (!checkFeatures(data.offer.features)) {
+  if (!checkFeatures(data.features)) {
     errors.push(`Invalid features`);
   }
-  if (!checkImage(data.author.avatar)) {
+  if (!checkImage(data.avatar)) {
     errors.push(`Invalid file format. Image should be image/jpg, image/jpeg or image/png`);
   }
-  if (!checkImage(data.author.preview)) {
+  if (!checkImage(data.preview)) {
     errors.push(`Invalid file format. Image should be image/jpg, image/jpeg or image/png`);
   }
-  if (!checkName(data.author.name)) {
+  if (!checkName(data.name)) {
     errors.push(`Invalid name`);
   }
   if (errors.length > 0) {

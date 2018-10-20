@@ -65,7 +65,7 @@ offersRouter.post(`/offers`, jsonParser, upload.single(`photo`), (req, res) => {
   const body = req.body;
   const photo = req.file;
   if (photo) {
-    body.photo = {name: photo.originalname};
+    body.avatar = photo;
   }
   res.send(validate(body));
 });
@@ -74,7 +74,6 @@ offersRouter.use((err, req, res, next) => {
   if (err instanceof ValidationError) {
     res.status(err.code).json(err.errors);
   } else {
-    console.log(err);
     next(err);
   }
 });
