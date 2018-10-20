@@ -9,6 +9,7 @@ const entity = require(`../src/data/entity`);
 
 const TEMP_DIR = __dirname;
 const object = entity.generateEntity();
+console.log(1);
 
 const writeFile = (itemsNumber) => {
   return new Promise((success) => {
