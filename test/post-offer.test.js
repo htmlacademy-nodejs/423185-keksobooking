@@ -54,7 +54,7 @@ describe(`POST /api/offers`, () => {
       .field(`checkin`, checkin)
       .field(`checkout`, checkout)
       .field(`features`, features)
-      .attach(`photo`, `test/test.png`)
+      .attach(`photo`, `test/test-images/test.png`)
       .set(`Accept`, `application/json`)
       .set(`Content-Type`, `multipart/form-data`)
       .expect(200)
@@ -152,6 +152,72 @@ describe(`POST /api/offers`, () => {
       .expect(`Content-Type`, /json/)
       .then((err) => {
         assert.deepEqual(err.body[0], `Checkout time should be in HH:mm format`);
+      });
+  });
+
+  it(`should not send offer with incorrect rooms number as json`, () => {
+    offerCopy = Object.assign({}, entityToNewOffer);
+    offerCopy.rooms = 5000;
+    return request(app)
+      .post(`/api/offers`)
+      .send(offerCopy)
+      .set(`Accept`, `application/json`)
+      .expect(400)
+      .expect(`Content-Type`, /json/)
+      .then((err) => {
+        assert.deepEqual(err.body[0], `Rooms number should be countable with a length from 0 to 1000`);
+      });
+  });
+
+  it(`should not send offer with incorrect features as json`, () => {
+    offerCopy = Object.assign({}, entityToNewOffer);
+    offerCopy.features = [`swimming pool`, `cazino`];
+    return request(app)
+      .post(`/api/offers`)
+      .send(offerCopy)
+      .set(`Accept`, `application/json`)
+      .expect(400)
+      .expect(`Content-Type`, /json/)
+      .then((err) => {
+        assert.deepEqual(err.body[0], `Invalid features`);
+      });
+  });
+
+  it(`should not send offer with incorrect features and rooms as json`, () => {
+    offerCopy = Object.assign({}, entityToNewOffer);
+    offerCopy.features = [`swimming pool`, `cazino`];
+    offerCopy.rooms = 5000;
+    return request(app)
+      .post(`/api/offers`)
+      .send(offerCopy)
+      .set(`Accept`, `application/json`)
+      .expect(400)
+      .expect(`Content-Type`, /json/)
+      .then((err) => {
+        assert.deepEqual(err.body[0], `Rooms number should be countable with a length from 0 to 1000`);
+        assert.deepEqual(err.body[1], `Invalid features`);
+      });
+  });
+
+  it(`should not send offer with incorrect avatar as multipart/form-data`, () => {
+    return request(app)
+      .post(`/api/offers`)
+      .field(`name`, name)
+      .field(`title`, title)
+      .field(`address`, address)
+      .field(`price`, price)
+      .field(`type`, type)
+      .field(`rooms`, rooms)
+      .field(`guests`, guests)
+      .field(`checkin`, checkin)
+      .field(`checkout`, checkout)
+      .field(`features`, features)
+      .attach(`photo`, `test/test-images/test1.txt`)
+      .set(`Accept`, `application/json`)
+      .expect(400)
+      .expect(`Content-Type`, /json/)
+      .then((err) => {
+        assert.deepEqual(err.body[0], `Invalid file format. Image should be image/jpg, image/jpeg or image/png`);
       });
   });
 
