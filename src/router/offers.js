@@ -6,7 +6,6 @@ const IlliegalDateError = require(`../errors/illegal-date-error`);
 const InvalidParameterError = require(`../errors/illegal-date-error`);
 const NotFoundError = require(`../errors/not-found-error`);
 const ValidationError = require(`../errors/validation-error`);
-const entity = require(`../data/entity`);
 const util = require(`../data/util`);
 const multer = require(`multer`);
 
@@ -17,8 +16,8 @@ const storage = multer.memoryStorage();
 const upload = multer({storage});
 const jsonParser = express.json();
 
-const ENTITIES_COUNT = 28;
-const offers = entity.generateMultipleEntities(ENTITIES_COUNT);
+const PAGE_DEFAULT_LIMIT = 20;
+const PAGE_DEFAULT_SKIP = 0;
 
 const queryCheck = (query) => {
   if (!query) {
@@ -31,22 +30,38 @@ const queryCheck = (query) => {
   }
 };
 
-offersRouter.get(`/offers`, (req, res) => {
-  const limit = queryCheck(req.query.limit);
-  const skip = queryCheck(req.query.skip);
-  let modifiedOffers = [...offers];
+offersRouter.get(`/offers`, (req, res, next) => {
+  let cursor;
+  let offersCount;
+  const limit = req.query.limit ? queryCheck(req.query.limit) : PAGE_DEFAULT_LIMIT;
+  const skip = req.query.skip ? queryCheck(req.query.skip) : PAGE_DEFAULT_SKIP;
 
-  if (skip) {
-    modifiedOffers = offers.slice(skip);
-  }
-  if (limit) {
-    modifiedOffers.length = limit > modifiedOffers.length ? modifiedOffers.length : limit;
-  }
-
-  res.send(modifiedOffers);
+  return new Promise((success, _fail) => {
+    OffersStore.getAllOffers()
+      .then((curs) => {
+        cursor = curs.skip(skip).limit(limit);
+      })
+      .then(() => {
+        offersCount = cursor.count();
+      })
+      .then(() => {
+        cursor.toArray();
+      })
+      .then((offers) => {
+        success(res.send({
+          data: offers,
+          skip,
+          limit,
+          total: offersCount
+        }));
+      })
+      .catch((err) => {
+        next(err);
+      });
+  });
 });
 
-offersRouter.get(`/offers/:date`, (req, res) => {
+offersRouter.get(`/offers/:date`, (req, res, next) => {
   const offerDate = req.params.date;
   const convertedDate = util.timestampToDate(offerDate);
 
@@ -57,12 +72,18 @@ offersRouter.get(`/offers/:date`, (req, res) => {
     throw new IlliegalDateError(`Invalid date error`);
   }
   const parsedDate = parseInt(offerDate, 10);
-  const date = offers.find((it) => it.date === parsedDate);
-  if (!date) {
-    throw new NotFoundError(`No offers were found at "${convertedDate}"`);
-  }
-
-  res.send(date);
+  return new Promise((success, _fail) => {
+    OffersStore.getOffer(parsedDate)
+      .then((answer) => {
+        if (!answer) {
+          throw new NotFoundError(`No offers were found at "${convertedDate}"`);
+        }
+        success(res.send(answer));
+      })
+      .catch((err) => {
+        next(err);
+      });
+  });
 });
 
 offersRouter.post(`/offers`, jsonParser, upload.single(`photo`), (req, res) => {
