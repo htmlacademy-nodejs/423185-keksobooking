@@ -12,6 +12,7 @@ const multer = require(`multer`);
 
 const offersRouter = new express.Router();
 const validate = require(`./validate`);
+const OffersStore = require(`./store`);
 const storage = multer.memoryStorage();
 const upload = multer({storage});
 const jsonParser = express.json();
@@ -20,7 +21,10 @@ const ENTITIES_COUNT = 28;
 const offers = entity.generateMultipleEntities(ENTITIES_COUNT);
 
 const queryCheck = (query) => {
-  if ((!isFinite(query) && query !== parseInt(query, 10)) || query < 0) {
+  if (!query) {
+    return ``;
+  }
+  if ((!isFinite(query) && query !== parseInt(query, 10)) && query > 0) {
     throw new InvalidParameterError(`Invalid parameter error`);
   } else {
     return parseInt(query, 10);
@@ -28,8 +32,8 @@ const queryCheck = (query) => {
 };
 
 offersRouter.get(`/offers`, (req, res) => {
-  const limit = req.query.limit ? queryCheck(req.query.limit) : ``;
-  const skip = req.query.skip ? queryCheck(req.query.skip) : ``;
+  const limit = queryCheck(req.query.limit);
+  const skip = queryCheck(req.query.skip);
   let modifiedOffers = [...offers];
 
   if (skip) {
