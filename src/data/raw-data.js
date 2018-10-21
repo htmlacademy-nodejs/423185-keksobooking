@@ -39,6 +39,10 @@ const photos = [
   `http://o0.github.io/assets/images/tokyo/hotel3.jpg`
 ];
 
+const imageMimes = [`image/jpg`, `image/jpeg`, `image/png`];
+
+const defaultNames = [`Keks`, `Pavel`, `Nikolay`, `Alex`, `Ulyana`, `Anastasyia`, `Julia`];
+
 module.exports = {
-  placeTitles, placeTypes, time, features, photos
+  placeTitles, placeTypes, time, features, photos, imageMimes, defaultNames
 };

@@ -5,11 +5,13 @@ const IllegalArgumentError = require(`../errors/illegal-argument-error`);
 const IlliegalDateError = require(`../errors/illegal-date-error`);
 const InvalidParameterError = require(`../errors/illegal-date-error`);
 const NotFoundError = require(`../errors/not-found-error`);
+const ValidationError = require(`../errors/validation-error`);
 const entity = require(`../data/entity`);
 const util = require(`../data/util`);
 const multer = require(`multer`);
 
 const offersRouter = new express.Router();
+const validate = require(`./validate`);
 const storage = multer.memoryStorage();
 const upload = multer({storage});
 const jsonParser = express.json();
@@ -42,8 +44,8 @@ offersRouter.get(`/offers`, (req, res) => {
 
 offersRouter.get(`/offers/:date`, (req, res) => {
   const offerDate = req.params.date;
-
   const convertedDate = util.timestampToDate(offerDate);
+
   if (!offerDate) {
     throw new IllegalArgumentError(`No date was typed`);
   }
@@ -61,11 +63,15 @@ offersRouter.get(`/offers/:date`, (req, res) => {
 
 offersRouter.post(`/offers`, jsonParser, upload.single(`photo`), (req, res) => {
   const body = req.body;
-  const photo = req.file;
-  if (photo) {
-    body.photo = {name: photo.originalname};
+  res.send(validate(body));
+});
+
+offersRouter.use((err, req, res, next) => {
+  if (err instanceof ValidationError) {
+    res.status(err.code).json(err.errors);
+  } else {
+    next(err);
   }
-  res.send(body);
 });
 
 
