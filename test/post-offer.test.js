@@ -1,7 +1,6 @@
 'use strict';
 
 const supertest = require(`supertest`);
-const request = require(`request`);
 const assert = require(`assert`);
 const app = require(`../src/commands/server`).app;
 const entity = require(`../src/data/entity`);
@@ -33,7 +32,7 @@ describe(`POST /api/offers`, () => {
   });
 
   it(`send offer with correct data as multipart/form-data with photo`, () => {
-    return util.downloadImage(avatar, request)
+    return util.downloadImage(avatar)
       .then(({body}) => {
         return supertest(app)
          .post(`/api/offers`)

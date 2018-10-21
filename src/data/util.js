@@ -1,5 +1,7 @@
 'use strict';
 
+const request = require(`request`);
+
 const generateRandomString = (setLength) => {
   let text = ``;
   const possible = `ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789`;
@@ -45,7 +47,7 @@ const timestampToDate = (ts) => {
   }
 };
 
-const downloadImage = (url, request) => new Promise((resolve, _reject) => {
+const downloadImage = (url) => new Promise((resolve, _reject) => {
   request.get(url, (err, res, body) => {
     resolve({res, body});
   });
