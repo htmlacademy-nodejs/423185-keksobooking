@@ -8,7 +8,7 @@ const entity = require(`../src/data/entity`);
 const offer = entity.generateEntity();
 const entityToNewOffer = entity.entityToNewOfferRequest(offer);
 let offerCopy;
-const {name, avatar, address, price, title, type, rooms, checkin, checkout, guests, features} = entityToNewOffer;
+const {name, address, price, title, type, rooms, checkin, checkout, guests, features} = entityToNewOffer;
 
 describe(`POST /api/offers`, () => {
   it(`send offer with correct data as json`, () => {
@@ -24,7 +24,6 @@ describe(`POST /api/offers`, () => {
     return request(app)
       .post(`/api/offers`)
       .field(`name`, name)
-      .field(`avatar`, avatar)
       .field(`title`, title)
       .field(`address`, address)
       .field(`price`, price)
@@ -44,7 +43,6 @@ describe(`POST /api/offers`, () => {
     return request(app)
       .post(`/api/offers`)
       .field(`name`, name)
-      .field(`avatar`, avatar)
       .field(`title`, title)
       .field(`address`, address)
       .field(`price`, price)
@@ -196,28 +194,6 @@ describe(`POST /api/offers`, () => {
       .then((err) => {
         assert.deepEqual(err.body[0], `Rooms number should be countable with a length from 0 to 1000`);
         assert.deepEqual(err.body[1], `Invalid features`);
-      });
-  });
-
-  it(`should not send offer with incorrect avatar as multipart/form-data`, () => {
-    return request(app)
-      .post(`/api/offers`)
-      .field(`name`, name)
-      .field(`title`, title)
-      .field(`address`, address)
-      .field(`price`, price)
-      .field(`type`, type)
-      .field(`rooms`, rooms)
-      .field(`guests`, guests)
-      .field(`checkin`, checkin)
-      .field(`checkout`, checkout)
-      .field(`features`, features)
-      .attach(`photo`, `test/test-images/test1.txt`)
-      .set(`Accept`, `application/json`)
-      .expect(400)
-      .expect(`Content-Type`, /json/)
-      .then((err) => {
-        assert.deepEqual(err.body[0], `Invalid file format. Image should be image/jpg, image/jpeg or image/png`);
       });
   });
 

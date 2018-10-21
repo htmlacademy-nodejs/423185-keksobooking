@@ -52,7 +52,6 @@ module.exports = {
   entityToNewOfferRequest(entity) {
     return {
       name: ``,
-      avatar: ``,
       title: entity.offer.title,
       address: entity.offer.address,
       description: entity.offer.description,

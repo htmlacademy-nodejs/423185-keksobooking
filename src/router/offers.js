@@ -63,10 +63,6 @@ offersRouter.get(`/offers/:date`, (req, res) => {
 
 offersRouter.post(`/offers`, jsonParser, upload.single(`photo`), (req, res) => {
   const body = req.body;
-  const photo = req.file;
-  if (photo) {
-    body.avatar = photo;
-  }
   res.send(validate(body));
 });
 

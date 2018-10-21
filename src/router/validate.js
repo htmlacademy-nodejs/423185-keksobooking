@@ -1,6 +1,6 @@
 'use strict';
 
-const {placeTypes, features, imageMimes, defaultNames} = require(`../data/raw-data`);
+const {placeTypes, features, defaultNames} = require(`../data/raw-data`);
 const ValidationError = require(`../errors/validation-error`);
 
 const MAX_TITLE_LENGTH = 140;
@@ -16,18 +16,30 @@ const MAX_ROOMS_NUMBER = 1000;
 const MIN_ROOMS_NUMBER = 0;
 
 const checkTitle = (title) => {
+  if (!title) {
+    return false;
+  }
   return title.length <= MAX_TITLE_LENGTH && title.length >= MIN_TITLE_LENGTH && typeof title === `string`;
 };
 
 const checkType = (type) => {
+  if (!type) {
+    return false;
+  }
   return placeTypes.find((item) => item === type);
 };
 
 const checkPrice = (price) => {
+  if (!price) {
+    return false;
+  }
   return price > MIN_PRICE && price <= MAX_PRICE && parseInt(price, 10);
 };
 
 const checkAddress = (address) => {
+  if (!address) {
+    return false;
+  }
   return address.length <= MAX_ADDRESS_LENGTH && address.length >= MIN_ADDRESS_LENGTH && typeof address === `string`;
 };
 
@@ -41,6 +53,9 @@ const checkTime = (time) => {
 };
 
 const checkRooms = (rooms) => {
+  if (!rooms) {
+    return false;
+  }
   return rooms >= MIN_ROOMS_NUMBER && rooms <= MAX_ROOMS_NUMBER;
 };
 
@@ -51,14 +66,6 @@ const checkFeatures = (featuresInserted) => {
     return features.includes(featuresInserted);
   } else {
     return featuresInserted.every((item) => features.includes(item));
-  }
-};
-
-const checkImage = (avatar) => {
-  if (!avatar) {
-    return true;
-  } else {
-    return imageMimes.find((item) => item === avatar.mimetype);
   }
 };
 
@@ -95,12 +102,6 @@ const validate = (data) => {
   }
   if (!checkFeatures(data.features)) {
     errors.push(`Invalid features`);
-  }
-  if (!checkImage(data.avatar)) {
-    errors.push(`Invalid file format. Image should be image/jpg, image/jpeg or image/png`);
-  }
-  if (!checkImage(data.preview)) {
-    errors.push(`Invalid file format. Image should be image/jpg, image/jpeg or image/png`);
   }
   if (!checkName(data.name)) {
     errors.push(`Invalid name`);
