@@ -45,11 +45,13 @@ const timestampToDate = (ts) => {
   }
 };
 
-const downloadImage = (url, request) => new Promise((resolve, _reject) => {
-  request.get(url, (err, res, body) => {
-    resolve({res, body});
+const downloadImage = (url, request) => {
+  return new Promise((resolve, _reject) => {
+    request.get(url, (err, res, body) => {
+      resolve({res, body});
+    });
   });
-});
+};
 
 const randomChoice = (arr) => arr[generateRandomInteger(0, arr.length - 1)];
 
