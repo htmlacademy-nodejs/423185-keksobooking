@@ -63,5 +63,6 @@ module.exports = {
       checkout: entity.offer.checkout,
       features: entity.offer.features
     };
-  }
+  },
+  author
 };

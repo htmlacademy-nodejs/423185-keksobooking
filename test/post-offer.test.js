@@ -1,18 +1,20 @@
 'use strict';
 
+const supertest = require(`supertest`);
 const request = require(`supertest`);
 const assert = require(`assert`);
 const app = require(`../src/commands/server`).app;
 const entity = require(`../src/data/entity`);
+const util = require(`../src/data/util`);
 
 const offer = entity.generateEntity();
+const avatar = entity.author.avatar;
 const entityToNewOffer = entity.entityToNewOfferRequest(offer);
 let offerCopy;
-const {name, address, price, title, type, rooms, checkin, checkout, guests, features} = entityToNewOffer;
 
 describe(`POST /api/offers`, () => {
   it(`send offer with correct data as json`, () => {
-    return request(app)
+    return supertest(app)
       .post(`/api/offers`)
       .send(entityToNewOffer)
       .set(`Accept`, `application/json`)
@@ -21,18 +23,9 @@ describe(`POST /api/offers`, () => {
   });
 
   it(`send offer with correct data as multipart/form-data`, () => {
-    return request(app)
+    return supertest(app)
       .post(`/api/offers`)
-      .field(`name`, name)
-      .field(`title`, title)
-      .field(`address`, address)
-      .field(`price`, price)
-      .field(`type`, type)
-      .field(`rooms`, rooms)
-      .field(`guests`, guests)
-      .field(`checkin`, checkin)
-      .field(`checkout`, checkout)
-      .field(`features`, features)
+      .field(entityToNewOffer)
       .set(`Accept`, `application/json`)
       .set(`Content-Type`, `multipart/form-data`)
       .expect(200)
@@ -40,19 +33,21 @@ describe(`POST /api/offers`, () => {
   });
 
   it(`send offer with correct data as multipart/form-data with photo`, () => {
-    return request(app)
+    let photo;
+
+    /* eslint-disable */
+    before((done) => util.downloadImage(avatar, request).then(
+        ({_res, body}) => {
+          photo = body;
+          done();
+        })
+    );
+    /* eslint-enable */
+
+    return supertest(app)
       .post(`/api/offers`)
-      .field(`name`, name)
-      .field(`title`, title)
-      .field(`address`, address)
-      .field(`price`, price)
-      .field(`type`, type)
-      .field(`rooms`, rooms)
-      .field(`guests`, guests)
-      .field(`checkin`, checkin)
-      .field(`checkout`, checkout)
-      .field(`features`, features)
-      .attach(`photo`, `test/test-images/test.png`)
+      .field(entityToNewOffer)
+      .attach(`photo`, photo)
       .set(`Accept`, `application/json`)
       .set(`Content-Type`, `multipart/form-data`)
       .expect(200)
@@ -62,7 +57,7 @@ describe(`POST /api/offers`, () => {
   it(`should not send offer with incorrect price as json`, () => {
     offerCopy = Object.assign({}, entityToNewOffer);
     offerCopy.price = 1000000;
-    return request(app)
+    return supertest(app)
       .post(`/api/offers`)
       .send(offerCopy)
       .set(`Accept`, `application/json`)
@@ -81,7 +76,7 @@ describe(`POST /api/offers`, () => {
       посетить Северную Пальмиру, смогут заказать в нем отличный номер, чтобы с максимальной пользой провести 
       имеющееся время для отдыха, экскурсий или решения разного рода деловых задач, вопросов. Профессиональный
        персонал нашего отеля постарается все сделать так, чтобы отдых был комфортным и максимально приятным.`;
-    return request(app)
+    return supertest(app)
       .post(`/api/offers`)
       .send(offerCopy)
       .set(`Accept`, `application/json`)
@@ -100,7 +95,7 @@ describe(`POST /api/offers`, () => {
       посетить Северную Пальмиру, смогут заказать в нем отличный номер, чтобы с максимальной пользой провести 
       имеющееся время для отдыха, экскурсий или решения разного рода деловых задач, вопросов. Профессиональный 
       персонал нашего отеля постарается все сделать так, чтобы отдых был комфортным и максимально приятным.`;
-    return request(app)
+    return supertest(app)
       .post(`/api/offers`)
       .send(offerCopy)
       .set(`Accept`, `application/json`)
@@ -114,7 +109,7 @@ describe(`POST /api/offers`, () => {
   it(`should not send offer with incorrect type as json`, () => {
     offerCopy = Object.assign({}, entityToNewOffer);
     offerCopy.type = `palddddace`;
-    return request(app)
+    return supertest(app)
       .post(`/api/offers`)
       .send(offerCopy)
       .set(`Accept`, `application/json`)
@@ -128,7 +123,7 @@ describe(`POST /api/offers`, () => {
   it(`should not send offer with incorrect checkin as json`, () => {
     offerCopy = Object.assign({}, entityToNewOffer);
     offerCopy.checkin = `gfgf:ooop`;
-    return request(app)
+    return supertest(app)
       .post(`/api/offers`)
       .send(offerCopy)
       .set(`Accept`, `application/json`)
@@ -142,7 +137,7 @@ describe(`POST /api/offers`, () => {
   it(`should not send offer with incorrect checkout as json`, () => {
     offerCopy = Object.assign({}, entityToNewOffer);
     offerCopy.checkout = `gf444gf:oo45op`;
-    return request(app)
+    return supertest(app)
       .post(`/api/offers`)
       .send(offerCopy)
       .set(`Accept`, `application/json`)
@@ -156,7 +151,7 @@ describe(`POST /api/offers`, () => {
   it(`should not send offer with incorrect rooms number as json`, () => {
     offerCopy = Object.assign({}, entityToNewOffer);
     offerCopy.rooms = 5000;
-    return request(app)
+    return supertest(app)
       .post(`/api/offers`)
       .send(offerCopy)
       .set(`Accept`, `application/json`)
@@ -170,7 +165,7 @@ describe(`POST /api/offers`, () => {
   it(`should not send offer with incorrect features as json`, () => {
     offerCopy = Object.assign({}, entityToNewOffer);
     offerCopy.features = [`swimming pool`, `cazino`];
-    return request(app)
+    return supertest(app)
       .post(`/api/offers`)
       .send(offerCopy)
       .set(`Accept`, `application/json`)
@@ -185,7 +180,7 @@ describe(`POST /api/offers`, () => {
     offerCopy = Object.assign({}, entityToNewOffer);
     offerCopy.features = [`swimming pool`, `cazino`];
     offerCopy.rooms = 5000;
-    return request(app)
+    return supertest(app)
       .post(`/api/offers`)
       .send(offerCopy)
       .set(`Accept`, `application/json`)
@@ -198,7 +193,7 @@ describe(`POST /api/offers`, () => {
   });
 
   it(`doesn't accept invalid post urls`, () => {
-    return request(app)
+    return supertest(app)
       .post(`/api/strangeurl`)
       .send(entityToNewOffer)
       .set(`Accept`, `application/json`)
