@@ -1,14 +1,15 @@
 "use strict";
 
-const db = require(`../database.db`);
+const db = require(`../database/db`);
 
 const setupCollection = () => {
-  return new Promise((success, _fail) => {
+  return new Promise((success) => {
     db()
       .then((dBase) => {
-        const collection = dBase.collection(`offers`);
-        collection.createIndex({unique: true});
-        success(collection);
+        dBase.collection(`offers`);
+      })
+      .then((coll) => {
+        success(coll);
       });
   });
 };
@@ -19,9 +20,10 @@ class OffersStore {
   }
 
   getOffers(date) {
-    return new Promise((success, _fail) => {
-      success(this.collection.find({date}));
-    });
+    this.collection
+      .then((res) => {
+        find({ date })
+      });
   }
 
   getAllOffers() {
@@ -32,6 +34,7 @@ class OffersStore {
 
   saveOffer(data) {
     return new Promise((success, _fail) => {
+      console.log(this.collection);
       success(this.collection.insertOne(data));
     });
   }

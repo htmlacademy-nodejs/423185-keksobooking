@@ -8,10 +8,12 @@ const NotFoundError = require(`../errors/not-found-error`);
 const ValidationError = require(`../errors/validation-error`);
 const util = require(`../data/util`);
 const multer = require(`multer`);
+const toStream = require(`buffer-to-stream`);
 
 const offersRouter = new express.Router();
 const validate = require(`./validate`);
 const OffersStore = require(`./store`);
+const ImagesStore = require(`../images/store`);
 const storage = multer.memoryStorage();
 const upload = multer({storage});
 const jsonParser = express.json();
@@ -86,9 +88,25 @@ offersRouter.get(`/offers/:date`, (req, res, next) => {
   });
 });
 
-offersRouter.post(`/offers`, jsonParser, upload.single(`photo`), (req, res) => {
+offersRouter.post(`/offers`, jsonParser, upload.single(`photo`), (req, res, next) => {
   const body = req.body;
-  res.send(validate(body));
+  const avatar = req.file;
+  let insertedId;
+  const validatedRequest = validate(body);
+
+  OffersStore.saveOffer(validatedRequest)
+    .then((result) => {
+      insertedId = result.insertedId;
+      if (avatar) {
+        ImagesStore.save(insertedId, toStream(avatar.buffer));
+      }
+    })
+    .then(() => {
+      res.send(validate(body));
+    })
+    .catch((err) => {
+      next(err);
+    });
 });
 
 offersRouter.use((err, req, res, next) => {
