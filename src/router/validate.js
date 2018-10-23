@@ -40,7 +40,17 @@ const checkAddress = (address) => {
   if (!address) {
     return false;
   }
-  return address.length <= MAX_ADDRESS_LENGTH && address.length >= MIN_ADDRESS_LENGTH && typeof address === `string`;
+  if (address.length > MAX_ADDRESS_LENGTH || address.length < MIN_ADDRESS_LENGTH || typeof address !== `string`) {
+    return false;
+  }
+  const matchArray = address.match(/\d+/g);
+  if (!matchArray) {
+    return false;
+  }
+  if (matchArray.length !== 2) {
+    return false;
+  }
+  return true;
 };
 
 const checkTime = (time) => {

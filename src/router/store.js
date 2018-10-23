@@ -5,7 +5,6 @@ const initializeDb = require(`../database/db`);
 const setupCollection = async () => {
   const db = await initializeDb();
   const collection = db.collection(`offers`);
-  collection.createIndex({date: -1}, {unique: true});
   return collection;
 };
 

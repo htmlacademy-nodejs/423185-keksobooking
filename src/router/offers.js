@@ -21,6 +21,8 @@ const storage = multer.memoryStorage();
 const upload = multer({storage});
 const jsonParser = express.json();
 
+const defaultNames = require(`../data/raw-data`).defaultNames;
+
 const PAGE_DEFAULT_LIMIT = 20;
 const PAGE_DEFAULT_SKIP = 0;
 
@@ -35,6 +37,15 @@ const queryCheck = (query) => {
   } else {
     return parseInt(query, 10);
   }
+};
+
+const modifyRequestToRes = (request) => {
+  const matchArray = request.address.match(/\d+/g);
+  const location = {x: matchArray[0], y: matchArray[1]};
+  const name = defaultNames[util.generateRandomInteger(0, defaultNames.length - 1)];
+  let resultingObject = Object.assign({}, request, {name}, location);
+
+  return resultingObject;
 };
 
 offersRouter.get(`/offers`, asyncMiddleware(async (req, res, _next) => {
@@ -103,6 +114,7 @@ offersRouter.post(`/offers`, jsonParser, upload.single(`photo`), asyncMiddleware
   const body = req.body;
   const avatar = req.file;
   const validatedRequest = validate(body);
+  const requestToRes = modifyRequestToRes(validatedRequest);
 
   const result = await OffersStore.saveOffer(validatedRequest);
   const insertedId = result.insertedId;
@@ -111,7 +123,9 @@ offersRouter.post(`/offers`, jsonParser, upload.single(`photo`), asyncMiddleware
     await ImagesStore.save(insertedId, new GridStream(avatar.buffer));
   }
 
-  res.send(validate(body));
+  const requestToDatabase = modifyRequestToDatabase(requestToRes);
+
+  res.send(requestToRes);
 }));
 
 offersRouter.use((err, req, res, next) => {
