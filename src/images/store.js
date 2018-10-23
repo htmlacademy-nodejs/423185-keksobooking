@@ -2,7 +2,6 @@
 
 const initializeDb = require(`../database/db`);
 const mongodb = require(`mongodb`);
-const fs = require(`fs`);
 
 const setupBucket = async () => {
   const db = await initializeDb();
@@ -17,24 +16,18 @@ class ImagesStore {
   }
 
   async get(filename) {
-    return new Promise((success, fail) => {
-      const bucket = this.bucket.openDownloadStreamByName(filename);
-      bucket.on(`error`, fail());
-      bucket.on(`finish`, success());
+    const streamBucket = await this.bucket.openDownloadStreamByName(filename).on(`error`, Promise.reject());
 
-      return bucket;
-    });
+    return streamBucket;
   }
 
   async save(filename, stream) {
-    return new Promise((success, fail) => {
-      stream.pipe(this.bucket.openUploadStream(filename))
-      .on(`error`, fail())
-      .on(`finish`, success());
-    });
+    await stream.pipe(this.bucket.openUploadStream(filename))
+    .on(`error`, Promise.reject())
+    .on(`finish`, Promise.resolve());
   }
 
 }
 
 module.exports = new ImagesStore(setupBucket().
-    catch((e) => console.error(`Failed to set up bucket`, e)));
+  catch((e) => console.error(`Failed to set up bucket`, e)));

@@ -4,9 +4,9 @@ const initializeDb = require(`../database/db`);
 
 const setupCollection = async () => {
   const db = await initializeDb();
-  const collectionOffers = await db.collection(`offers`);
-
-  return collectionOffers;
+  const collection = db.collection(`offers`);
+  collection.createIndex({date: -1}, {unique: true});
+  return collection;
 };
 
 class OffersStore {
@@ -15,18 +15,24 @@ class OffersStore {
   }
 
   async getOffers(date) {
-    return await (this.collection).findOne(date);
+    const cursor = await this.collection;
+
+    return cursor.findOne(date);
   }
 
   async getAllOffers() {
-    return await (this.collection).find();
+    const cursor = await this.collection;
+
+    return cursor.find();
   }
 
   async saveOffer(data) {
-    return await (this.collection).insertOne(data);
+    const cursor = await this.collection;
+
+    return cursor.insertOne(data);
   }
 
 }
 
 module.exports = new OffersStore(setupCollection().
-  catch((e) => console.error(`Failed to set up offers-collection`, e)));
+  catch((err) => console.error(`Failed to set up offers-collection`, err)));
