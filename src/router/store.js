@@ -1,17 +1,12 @@
 "use strict";
 
-const db = require(`../database/db`);
+const initializeDb = require(`../database/db`);
 
-const setupCollection = () => {
-  return new Promise((success) => {
-    db()
-      .then((dBase) => {
-        dBase.collection(`offers`);
-      })
-      .then((coll) => {
-        success(coll);
-      });
-  });
+const setupCollection = async () => {
+  const db = await initializeDb();
+  const collectionOffers = await db.collection(`offers`);
+
+  return collectionOffers;
 };
 
 class OffersStore {
@@ -19,24 +14,16 @@ class OffersStore {
     this.collection = collection;
   }
 
-  getOffers(date) {
-    this.collection
-      .then((res) => {
-        find({ date })
-      });
+  async getOffers(date) {
+    return await (this.collection).findOne(date);
   }
 
-  getAllOffers() {
-    return new Promise((success, _fail) => {
-      success(this.collection.findOne());
-    });
+  async getAllOffers() {
+    return await (this.collection).find();
   }
 
-  saveOffer(data) {
-    return new Promise((success, _fail) => {
-      console.log(this.collection);
-      success(this.collection.insertOne(data));
-    });
+  async saveOffer(data) {
+    return await (this.collection).insertOne(data);
   }
 
 }
