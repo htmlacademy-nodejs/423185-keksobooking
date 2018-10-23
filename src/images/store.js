@@ -4,16 +4,11 @@ const initializeDb = require(`../database/db`);
 const mongodb = require(`mongodb`);
 const fs = require(`fs`);
 
-const setupBucket = () => {
-  return new Promise((success, _fail) => {
-    initializeDb()
-    .then((dBase) => {
-      const bucket = new mongodb.GridFSBucket(dBase, {
-        bucketName: `avatars`
-      });
-      success(bucket);
-    });
-  });
+const setupBucket = async () => {
+  const db = await initializeDb();
+  const bucket = new mongodb.GridFSBucket(db, {bucketName: `avatars`});
+
+  return bucket;
 };
 
 class ImagesStore {
@@ -21,20 +16,17 @@ class ImagesStore {
     this.bucket = bucket;
   }
 
-  get(filename) {
+  async get(filename) {
     return new Promise((success, fail) => {
-      this.bucket.openDownloadStreamByName(filename)
-      .pipe(fs.createWriteStream(filename))
-      .on(`error`, () => {
-        fail();
-      })
-      .on(`end`, () => {
-        success();
-      });
+      const bucket = this.bucket.openDownloadStreamByName(filename);
+      bucket.on(`error`, fail());
+      bucket.on(`finish`, success());
+
+      return bucket;
     });
   }
 
-  save(filename, stream) {
+  async save(filename, stream) {
     return new Promise((success, fail) => {
       stream.pipe(this.bucket.openUploadStream(filename))
       .on(`error`, fail())
