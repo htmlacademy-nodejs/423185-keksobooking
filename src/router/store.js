@@ -13,7 +13,7 @@ class OffersStore {
     this.collection = collection;
   }
 
-  async getOffers(date) {
+  async getOffer(date) {
     const cursor = await this.collection;
 
     return cursor.findOne(date);
