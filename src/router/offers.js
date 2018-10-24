@@ -2,21 +2,16 @@
 
 const express = require(`express`);
 
-const IllegalArgumentError = require(`../errors/illegal-argument-error`);
-const IlliegalDateError = require(`../errors/illegal-date-error`);
-const InvalidParameterError = require(`../errors/illegal-date-error`);
 const NotFoundError = require(`../errors/not-found-error`);
 const ValidationError = require(`../errors/validation-error`);
 const MongoError = require(`mongodb`).MongoError;
 
-const util = require(`../data/util`);
+const handlers = require(`./handlers`);
 const multer = require(`multer`);
 
 const offersRouter = new express.Router();
 const GridStream = require(`./stream`);
 const validate = require(`./validate`);
-const OffersStore = require(`./store`);
-const ImagesStore = require(`../images/store`);
 const storage = multer.memoryStorage();
 const upload = multer({storage});
 const jsonParser = express.json();
@@ -26,22 +21,25 @@ const PAGE_DEFAULT_SKIP = 0;
 
 const asyncMiddleware = (fn) => (req, res, next) => fn(req, res, next).catch((err) => next(err));
 
-const queryCheck = (query) => {
-  if (!query) {
-    return ``;
-  }
-  if ((!isFinite(query) && query !== parseInt(query, 10)) && query > 0) {
-    throw new InvalidParameterError(`Invalid parameter error`);
+const notFoundHandler = (req, res) => {
+  res.status(404).send(`Page was not found`);
+};
+
+const errorHandler = (err, req, res, _next) => {
+  if (err instanceof ValidationError) {
+    res.status(err.code).json(err.errors);
+  } else if (err instanceof MongoError) {
+    res.status(400).json(err.message);
   } else {
-    return parseInt(query, 10);
+    res.status(err.code || 500).send(err.message);
   }
 };
 
 offersRouter.get(`/offers`, asyncMiddleware(async (req, res, _next) => {
-  const limit = req.query.limit ? queryCheck(req.query.limit) : PAGE_DEFAULT_LIMIT;
-  const skip = req.query.skip ? queryCheck(req.query.skip) : PAGE_DEFAULT_SKIP;
+  const limit = req.query.limit ? handlers.queryCheck(req.query.limit) : PAGE_DEFAULT_LIMIT;
+  const skip = req.query.skip ? handlers.queryCheck(req.query.skip) : PAGE_DEFAULT_SKIP;
 
-  const cursor = await OffersStore.getAllOffers();
+  const cursor = await offersRouter.offersStore.getAllOffers();
   const cursorWithParams = await cursor.skip(skip).limit(limit);
   const offersCount = await cursor.count();
   const offersArray = await cursorWithParams.toArray();
@@ -56,16 +54,8 @@ offersRouter.get(`/offers`, asyncMiddleware(async (req, res, _next) => {
 
 offersRouter.get(`/offers/:date`, asyncMiddleware(async (req, res, _next) => {
   const offerDate = req.params.date;
-  const convertedDate = util.timestampToDate(offerDate);
-
-  if (!offerDate) {
-    throw new IllegalArgumentError(`No date was typed`);
-  }
-  if (!parseInt(offerDate, 10) || !convertedDate) {
-    throw new IlliegalDateError(`Invalid date error`);
-  }
-  const parsedDate = parseInt(offerDate, 10);
-  const offer = await OffersStore.getOffer(parsedDate);
+  const {convertedDate, parsedDate} = handlers.checkDate(offerDate);
+  const offer = await offersRouter.offersStore.getOffer(parsedDate);
 
   if (!offer) {
     throw new NotFoundError(`No offers were found at "${convertedDate}"`);
@@ -75,24 +65,14 @@ offersRouter.get(`/offers/:date`, asyncMiddleware(async (req, res, _next) => {
 
 offersRouter.get(`/offers/:date/avatar`, asyncMiddleware(async (req, res, _next) => {
   const offerDate = req.params.date;
-  const convertedDate = util.timestampToDate(offerDate);
-
-  if (!offerDate) {
-    throw new IllegalArgumentError(`No date was typed`);
-  }
-
-  if (!parseInt(offerDate, 10) || !convertedDate) {
-    throw new IlliegalDateError(`Invalid date error`);
-  }
-
-  const parsedDate = parseInt(offerDate, 10);
-  const result = await OffersStore.getOffer(parsedDate);
+  const {convertedDate, parsedDate} = handlers.checkDate(offerDate);
+  const result = await offersRouter.offersStore.getOffer(parsedDate);
 
   if (!result) {
     throw new NotFoundError(`No offers were found at "${convertedDate}"`);
   }
 
-  const stream = await ImagesStore.get(result._id);
+  const stream = await offersRouter.imagesStore.get(result._id);
 
   stream.on(`error`, (e) => console.error(e));
   stream.on(`end`, () => res.end());
@@ -102,27 +82,29 @@ offersRouter.get(`/offers/:date/avatar`, asyncMiddleware(async (req, res, _next)
 offersRouter.post(`/offers`, jsonParser, upload.single(`photo`), asyncMiddleware(async (req, res, _next) => {
   const body = req.body;
   const avatar = req.file;
-  const validatedRequest = validate(body);
 
-  const result = await OffersStore.saveOffer(validatedRequest);
-  const insertedId = result.insertedId;
+  const validatedRequest = validate(body);
+  const dataToRsponse = handlers.modifyRequestToResponse(validatedRequest);
+  const dataToDatabase = handlers.modifyRequestToDatabase(validatedRequest);
+
+  await offersRouter.offersStore.saveOffer(dataToDatabase);
+  const dateId = dataToDatabase.offer;
 
   if (avatar) {
-    await ImagesStore.save(insertedId, new GridStream(avatar.buffer));
+    await offersRouter.imagesStore.save(dateId, new GridStream(avatar.buffer));
   }
 
-  res.send(validate(body));
+  res.send(dataToRsponse);
 }));
 
-offersRouter.use((err, req, res, next) => {
-  if (err instanceof ValidationError) {
-    res.status(err.code).json(err.errors);
-  } else if (err instanceof MongoError) {
-    res.status(400).json(err.message);
-  } else {
-    next(err);
-  }
-});
+
+offersRouter.use(notFoundHandler);
+
+offersRouter.use(errorHandler);
 
 
-module.exports = offersRouter;
+module.exports = (offersStore, imagesStore) => {
+  offersRouter.offersStore = offersStore;
+  offersRouter.imageStore = imagesStore;
+  return offersRouter;
+};

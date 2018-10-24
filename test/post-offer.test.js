@@ -10,7 +10,6 @@ const offer = entity.generateEntity();
 const avatar = entity.author.avatar;
 const newOfferRequest = entity.entityToNewOfferRequest(offer);
 let offerCopy;
-console.log(newOfferRequest);
 
 describe(`POST /api/offers`, () => {
   it(`send offer with correct data as json`, () => {

@@ -16,21 +16,9 @@ const checkPort = () => {
   }
 };
 
-const notFoundHandler = (req, res) => {
-  res.status(404).send(`Page was not found`);
-};
-
-const errorHandler = (err, req, res, _next) => {
-  res.status(err.code || 500).send(err.message);
-};
-
 app.use(express.static(`./static`));
 
 app.use(`/api`, offersRouter);
-
-app.use(notFoundHandler);
-
-app.use(errorHandler);
 
 const launchServer = (port) => {
   app.listen(port, () => console.log(`Server launched!\nConnect: http://localhost:${port}`));
