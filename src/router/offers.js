@@ -22,17 +22,16 @@ const PAGE_DEFAULT_SKIP = 0;
 const asyncMiddleware = (fn) => (req, res, next) => fn(req, res, next).catch((err) => next(err));
 
 const notFoundHandler = (req, res) => {
-  res.status(404).send(`Page was not found`);
+  res.status(404).send(({error: 404, errorMessage: `Page was not found`}));
 };
 
 const errorHandler = (err, req, res, _next) => {
   if (err instanceof ValidationError) {
-    res.status(err.code).json(err.errors);
+    res.status(err.code).json(err.errors.map(({fieldName, errorMessage}) => ({error: `Validation Error`, fieldName, errorMessage})));
   } else if (err instanceof MongoError) {
-    res.status(400).json(err.message);
+    res.status(400).json(({error: err.code, errorMessage: err.message}));
   } else {
-    console.log(err);
-    res.status(err.code || 500).send(err.message);
+    res.status(err.code || 500).send({error: err.code, errorMessage: err.message});
   }
 };
 
@@ -73,8 +72,16 @@ offersRouter.get(`/offers/:date/avatar`, asyncMiddleware(async (req, res, _next)
     throw new NotFoundError(`No offers were found at "${convertedDate}"`);
   }
 
-  const stream = await offersRouter.imagesStore.get(result._id);
+  const avatar = await offersRouter.imagesStore.get(parsedDate);
 
+  if (!avatar) {
+    throw new NotFoundError(`No offers were found at ${convertedDate}`);
+  }
+
+  res.header(`Content-Type`, `image/jpg`);
+  res.header(`Content-Length`, avatar.info.length);
+
+  const stream = avatar.stream;
   stream.on(`error`, (e) => console.error(e));
   stream.on(`end`, () => res.end());
   stream.pipe(res);
@@ -89,9 +96,10 @@ offersRouter.post(`/offers`, jsonParser, upload.single(`photo`), asyncMiddleware
   const dataToDatabase = handlers.modifyRequestToDatabase(validatedRequest);
 
   await offersRouter.offersStore.saveOffer(dataToDatabase);
-  const dateId = dataToDatabase.offer;
+  const dateId = dataToDatabase.date;
 
   if (avatar) {
+    console.log(dateId);
     await offersRouter.imagesStore.save(dateId, new GridStream(avatar.buffer));
   }
 
@@ -106,6 +114,6 @@ offersRouter.use(errorHandler);
 
 module.exports = (offersStore, imagesStore) => {
   offersRouter.offersStore = offersStore;
-  offersRouter.imageStore = imagesStore;
+  offersRouter.imagesStore = imagesStore;
   return offersRouter;
 };

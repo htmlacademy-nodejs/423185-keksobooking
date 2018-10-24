@@ -6,7 +6,6 @@ const mongodb = require(`mongodb`);
 const setupBucket = async () => {
   const db = await initializeDb();
   const bucket = new mongodb.GridFSBucket(db, {bucketName: `avatars`});
-
   return bucket;
 };
 
@@ -16,15 +15,20 @@ class ImagesStore {
   }
 
   async get(filename) {
-    const streamBucket = await this.bucket.openDownloadStreamByName(filename).on(`error`, Promise.reject());
+    const bucket = await this.bucket;
+    const results = await (bucket).find({filename}).toArray();
+    const entity = results[0];
+    if (!entity) {
+      return false;
+    }
 
-    return streamBucket;
+    return {info: entity, stream: bucket.openDownloadStreamByName(filename)};
   }
 
   async save(filename, stream) {
-    await stream.pipe(this.bucket.openUploadStream(filename))
-    .on(`error`, Promise.reject())
-    .on(`finish`, Promise.resolve());
+    const bucket = await this.bucket;
+    const uploadStream = bucket.openUploadStream(filename);
+    stream.pipe(uploadStream);
   }
 
 }

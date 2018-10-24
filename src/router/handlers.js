@@ -1,7 +1,7 @@
 "use strict";
 
 const util = require(`../data/util`);
-const defaultNames = require(`../data/raw-data`);
+const {defaultNames} = require(`../data/raw-data`);
 
 const InvalidParameterError = require(`../errors/illegal-date-error`);
 const IllegalArgumentError = require(`../errors/illegal-argument-error`);
@@ -41,12 +41,12 @@ const checkDate = (offerDate) => {
 };
 
 const modifyRequestToResponse = (request) => {
-  const matchArray = request.address.match(/d+/g);
+  const matchArray = request.address.match(/\d+/g);
   const location = {x: matchArray[0], y: matchArray[1]};
 
   const name = getName(request.name);
 
-  const resultingObject = Object.assign({}, {name}, {location});
+  const resultingObject = Object.assign({}, {request}, {name}, {location});
 
   return resultingObject;
 };
@@ -57,7 +57,7 @@ const modifyRequestToDatabase = (request) => {
   const name = offer.name;
   delete offer.name;
 
-  const matchArray = request.address.match(/d+/g);
+  const matchArray = request.address.match(/\d+/g);
   const location = {x: matchArray[0], y: matchArray[1]};
   const date = Date.now();
   const author = {name: getName(name), avatar: `api/offers/${date}/avatar`};

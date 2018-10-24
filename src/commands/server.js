@@ -1,7 +1,9 @@
 "use strict";
 
 const express = require(`express`);
-const offersRouter = require(`../router/offers`);
+const offersStore = require(`../router/store`);
+const imagesStore = require(`../images/store`);
+const offersRouter = require(`../router/offers`)(offersStore, imagesStore);
 const app = express();
 
 const DEFAULT_PORT = 3000;

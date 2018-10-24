@@ -2,7 +2,6 @@
 
 const request = require(`supertest`);
 const assert = require(`assert`);
-const util = require(`../src/data/util`);
 const entity = require(`../src/data/entity`);
 const express = require(`express`);
 
@@ -15,12 +14,13 @@ const testDate = entities[5].date;
 const offersStore = new OffersStoreMock(entities);
 const imagesStore = new ImagesStoreMock();
 
-const offersRouter = require(`../src/router/offers`)(offersStore, imagesStore);
-
 const app = express();
-app.use(`/api`, offersRouter);
 
 describe(`GET /api/offers`, () => {
+  before(() => {
+    const offersRouter = require(`../src/router/offers`)(offersStore, imagesStore);
+    app.use(`/api`, offersRouter);
+  });
   it(`get all offers`, () => {
     return request(app)
       .get(`/api/offers`)
@@ -70,8 +70,8 @@ describe(`GET /api/offers`, () => {
       .get(`/api/offers?limit=kfkdfkd`)
       .set(`Accept`, `application/json`)
       .expect(400)
-      .expect(`Invalid parameter error`)
-      .expect(`Content-Type`, /html/);
+      .expect({error: 400, errorMessage: `Invalid parameter error`})
+      .expect(`Content-Type`, /json/);
   });
 
   it(`get all offers with invalid skip param`, () => {
@@ -79,8 +79,8 @@ describe(`GET /api/offers`, () => {
       .get(`/api/offers?skip=-25`)
       .set(`Accept`, `application/json`)
       .expect(400)
-      .expect(`Invalid parameter error`)
-      .expect(`Content-Type`, /html/);
+      .expect({error: 400, errorMessage: `Invalid parameter error`})
+      .expect(`Content-Type`, /json/);
   });
 
 
@@ -89,8 +89,8 @@ describe(`GET /api/offers`, () => {
       .get(`/api/starngeurl`)
       .set(`Accept`, `application/json`)
       .expect(404)
-      .expect(`Page was not found`)
-      .expect(`Content-Type`, /html/);
+      .expect({error: 404, errorMessage: `Page was not found`})
+      .expect(`Content-Type`, /json/);
   });
 });
 
@@ -111,8 +111,8 @@ describe(`GET /api/offers/:date`, () => {
       .get(`/api/offers/971723378`)
       .set(`Accept`, `application/json`)
       .expect(404)
-      .expect(`No offers were found at "${util.timestampToDate(971723378)}"`)
-      .expect(`Content-Type`, /html/);
+      .expect({error: 404, errorMessage: `No offers were found at "12.01.1970"`})
+      .expect(`Content-Type`, /json/);
   });
 
   it(`get unknown offer with incorrect date`, () => {
@@ -120,8 +120,8 @@ describe(`GET /api/offers/:date`, () => {
       .get(`/api/offers/starngeurl`)
       .set(`Accept`, `application/json`)
       .expect(400)
-      .expect(`Invalid date error`)
-      .expect(`Content-Type`, /html/);
+      .expect({error: 400, errorMessage: `Invalid date error`})
+      .expect(`Content-Type`, /json/);
   });
 
 });
