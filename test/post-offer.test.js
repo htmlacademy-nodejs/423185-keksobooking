@@ -2,14 +2,25 @@
 
 const supertest = require(`supertest`);
 const assert = require(`assert`);
-const app = require(`../src/commands/server`).app;
 const entity = require(`../src/data/entity`);
 const util = require(`../src/data/util`);
+const express = require(`express`);
 
 const offer = entity.generateEntity();
 const avatar = entity.author.avatar;
 const newOfferRequest = entity.entityToNewOfferRequest(offer);
 let offerCopy;
+
+const OffersStoreMock = require(`./mock/offers-store-mock`);
+const ImagesStoreMock = require(`./mock/images-store-mock`);
+
+const newOffersStore = new OffersStoreMock(offer);
+const newImagesStore = new ImagesStoreMock();
+
+const router = require(`../src/router/offers`)(newOffersStore, newImagesStore);
+
+const app = express();
+app.use(`/api`, router);
 
 describe(`POST /api/offers`, () => {
   it(`send offer with correct data as json`, () => {

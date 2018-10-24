@@ -31,6 +31,7 @@ const errorHandler = (err, req, res, _next) => {
   } else if (err instanceof MongoError) {
     res.status(400).json(err.message);
   } else {
+    console.log(err);
     res.status(err.code || 500).send(err.message);
   }
 };
