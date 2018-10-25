@@ -1,7 +1,9 @@
 "use strict";
 
 const express = require(`express`);
-const offersRouter = require(`../router/offers`);
+const offersStore = require(`../router/store`);
+const imagesStore = require(`../images/store`);
+const offersRouter = require(`../router/offers`)(offersStore, imagesStore);
 const app = express();
 
 const DEFAULT_PORT = 3000;
@@ -16,21 +18,9 @@ const checkPort = () => {
   }
 };
 
-const notFoundHandler = (req, res) => {
-  res.status(404).send(`Page was not found`);
-};
-
-const errorHandler = (err, req, res, _next) => {
-  res.status(err.code || 500).send(err.message);
-};
-
 app.use(express.static(`./static`));
 
 app.use(`/api`, offersRouter);
-
-app.use(notFoundHandler);
-
-app.use(errorHandler);
 
 const launchServer = (port) => {
   app.listen(port, () => console.log(`Server launched!\nConnect: http://localhost:${port}`));

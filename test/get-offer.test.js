@@ -2,12 +2,25 @@
 
 const request = require(`supertest`);
 const assert = require(`assert`);
-const util = require(`../src/data/util`);
-const app = require(`../src/commands/server`).app;
+const entity = require(`../src/data/entity`);
+const express = require(`express`);
 
-const ENTITIES_COUNT = 28;
+const OffersStoreMock = require(`./mock/offers-store-mock`);
+const ImagesStoreMock = require(`./mock/images-store-mock`);
+
+const ENTITIES_COUNT = 18;
+const entities = entity.generateMultipleEntities(ENTITIES_COUNT);
+const testDate = entities[5].date;
+const offersStore = new OffersStoreMock(entities);
+const imagesStore = new ImagesStoreMock();
+
+const app = express();
 
 describe(`GET /api/offers`, () => {
+  before(() => {
+    const offersRouter = require(`../src/router/offers`)(offersStore, imagesStore);
+    app.use(`/api`, offersRouter);
+  });
   it(`get all offers`, () => {
     return request(app)
       .get(`/api/offers`)
@@ -15,7 +28,7 @@ describe(`GET /api/offers`, () => {
       .expect(200)
       .expect(`Content-Type`, /json/)
       .then((response) => {
-        assert.deepEqual(response.body.length, ENTITIES_COUNT);
+        assert.deepEqual(response.body.data.length, ENTITIES_COUNT);
       });
   });
 
@@ -26,29 +39,29 @@ describe(`GET /api/offers`, () => {
       .expect(200)
       .expect(`Content-Type`, /json/)
       .then((response) => {
-        assert.deepEqual(response.body.length, 5);
+        assert.deepEqual(response.body.data.length, 5);
       });
   });
 
   it(`get all offers with skip param`, () => {
     return request(app)
-      .get(`/api/offers?skip=25`)
+      .get(`/api/offers?skip=15`)
       .set(`Accept`, `application/json`)
       .expect(200)
       .expect(`Content-Type`, /json/)
       .then((response) => {
-        assert.deepEqual(response.body.length, 3);
+        assert.deepEqual(response.body.data.length, 3);
       });
   });
 
   it(`get all offers with both skip and limit param`, () => {
     return request(app)
-      .get(`/api/offers?skip=25&limit=23`)
+      .get(`/api/offers?skip=5&limit=10`)
       .set(`Accept`, `application/json`)
       .expect(200)
       .expect(`Content-Type`, /json/)
       .then((response) => {
-        assert.deepEqual(response.body.length, 3);
+        assert.deepEqual(response.body.data.length, 10);
       });
   });
 
@@ -57,8 +70,8 @@ describe(`GET /api/offers`, () => {
       .get(`/api/offers?limit=kfkdfkd`)
       .set(`Accept`, `application/json`)
       .expect(400)
-      .expect(`Invalid parameter error`)
-      .expect(`Content-Type`, /html/);
+      .expect({error: 400, errorMessage: `Invalid parameter error`})
+      .expect(`Content-Type`, /json/);
   });
 
   it(`get all offers with invalid skip param`, () => {
@@ -66,8 +79,8 @@ describe(`GET /api/offers`, () => {
       .get(`/api/offers?skip=-25`)
       .set(`Accept`, `application/json`)
       .expect(400)
-      .expect(`Invalid parameter error`)
-      .expect(`Content-Type`, /html/);
+      .expect({error: 400, errorMessage: `Invalid parameter error`})
+      .expect(`Content-Type`, /json/);
   });
 
 
@@ -76,40 +89,30 @@ describe(`GET /api/offers`, () => {
       .get(`/api/starngeurl`)
       .set(`Accept`, `application/json`)
       .expect(404)
-      .expect(`Page was not found`)
-      .expect(`Content-Type`, /html/);
+      .expect({error: 404, errorMessage: `Page was not found`})
+      .expect(`Content-Type`, /json/);
   });
 });
 
 describe(`GET /api/offers/:date`, () => {
-  let offer;
-
-  before(() => {
-    return request(app)
-      .get(`/api/offers`)
-      .set(`Accept`, `application/json`)
-      .then((response) => {
-        offer = response.body[3];
-      });
-  });
   it(`get wizard with true date`, () => {
     return request(app)
-      .get(`/api/offers/${offer.date}`)
+      .get(`/api/offers/${testDate}`)
       .set(`Accept`, `application/json`)
       .expect(200)
       .expect(`Content-Type`, /json/)
       .then((resp) => {
-        assert.deepEqual(resp.body, offer);
+        assert.deepEqual(resp.body.date, testDate);
       });
   });
 
   it(`get unknown offer with date "971723378"`, () => {
-    return request(app).
-      get(`/api/offers/971723378`).
-      set(`Accept`, `application/json`).
-      expect(404).
-      expect(`No offers were found at "${util.timestampToDate(971723378)}"`).
-      expect(`Content-Type`, /html/);
+    return request(app)
+      .get(`/api/offers/971723378`)
+      .set(`Accept`, `application/json`)
+      .expect(404)
+      .expect({error: 404, errorMessage: `No offers were found at "12.01.1970"`})
+      .expect(`Content-Type`, /json/);
   });
 
   it(`get unknown offer with incorrect date`, () => {
@@ -117,8 +120,8 @@ describe(`GET /api/offers/:date`, () => {
       .get(`/api/offers/starngeurl`)
       .set(`Accept`, `application/json`)
       .expect(400)
-      .expect(`Invalid date error`)
-      .expect(`Content-Type`, /html/);
+      .expect({error: 400, errorMessage: `Invalid date error`})
+      .expect(`Content-Type`, /json/);
   });
 
 });

@@ -2,16 +2,27 @@
 
 const supertest = require(`supertest`);
 const assert = require(`assert`);
-const app = require(`../src/commands/server`).app;
 const entity = require(`../src/data/entity`);
 const util = require(`../src/data/util`);
+const express = require(`express`);
 
 const offer = entity.generateEntity();
 const avatar = entity.author.avatar;
 const newOfferRequest = entity.entityToNewOfferRequest(offer);
 let offerCopy;
 
+const OffersStoreMock = require(`./mock/offers-store-mock`);
+const ImagesStoreMock = require(`./mock/images-store-mock`);
+
+const newOffersStore = new OffersStoreMock(offer);
+const newImagesStore = new ImagesStoreMock();
+const app = express();
+
 describe(`POST /api/offers`, () => {
+  before(() => {
+    const router = require(`../src/router/offers`)(newOffersStore, newImagesStore);
+    app.use(`/api`, router);
+  });
   it(`send offer with correct data as json`, () => {
     return supertest(app)
       .post(`/api/offers`)
@@ -35,13 +46,13 @@ describe(`POST /api/offers`, () => {
     return util.downloadImage(avatar)
       .then(({body}) => {
         return supertest(app)
-         .post(`/api/offers`)
-         .field(newOfferRequest)
-         .attach(`photo`, body)
-         .set(`Accept`, `application/json`)
-         .set(`Content-Type`, `multipart/form-data`)
-         .expect(200)
-         .expect(`Content-Type`, /json/);
+          .post(`/api/offers`)
+          .field(newOfferRequest)
+          .attach(`photo`, body)
+          .set(`Accept`, `application/json`)
+          .set(`Content-Type`, `multipart/form-data`)
+          .expect(200)
+          .expect(`Content-Type`, /json/);
       });
   });
 
@@ -55,7 +66,7 @@ describe(`POST /api/offers`, () => {
       .expect(400)
       .expect(`Content-Type`, /json/)
       .then((err) => {
-        assert.deepEqual(err.body[0], `The price should be from 0 to 100 000`);
+        assert.deepEqual(err.body[0].errorMessage, `The price should be from 0 to 100 000`);
       });
   });
 
@@ -74,7 +85,7 @@ describe(`POST /api/offers`, () => {
       .expect(400)
       .expect(`Content-Type`, /json/)
       .then((err) => {
-        assert.deepEqual(err.body[0], `The title should be a string with a length from 1 to 140 symbols`);
+        assert.deepEqual(err.body[0].errorMessage, `The title should be a string with a length from 1 to 140 symbols`);
       });
   });
 
@@ -93,7 +104,7 @@ describe(`POST /api/offers`, () => {
       .expect(400)
       .expect(`Content-Type`, /json/)
       .then((err) => {
-        assert.deepEqual(err.body[0], `The address should be a string with a length not more than 100 symbols`);
+        assert.deepEqual(err.body[0].errorMessage, `The address should be a string with a length not more than 100 symbols`);
       });
   });
 
@@ -107,7 +118,7 @@ describe(`POST /api/offers`, () => {
       .expect(400)
       .expect(`Content-Type`, /json/)
       .then((err) => {
-        assert.deepEqual(err.body[0], `Field name "type" must have correct value!`);
+        assert.deepEqual(err.body[0].errorMessage, `Field name "type" must have correct value!`);
       });
   });
 
@@ -121,7 +132,7 @@ describe(`POST /api/offers`, () => {
       .expect(400)
       .expect(`Content-Type`, /json/)
       .then((err) => {
-        assert.deepEqual(err.body[0], `Checkin time should be in HH:mm format`);
+        assert.deepEqual(err.body[0].errorMessage, `Checkin time should be in HH:mm format`);
       });
   });
 
@@ -135,7 +146,7 @@ describe(`POST /api/offers`, () => {
       .expect(400)
       .expect(`Content-Type`, /json/)
       .then((err) => {
-        assert.deepEqual(err.body[0], `Checkout time should be in HH:mm format`);
+        assert.deepEqual(err.body[0].errorMessage, `Checkout time should be in HH:mm format`);
       });
   });
 
@@ -149,7 +160,7 @@ describe(`POST /api/offers`, () => {
       .expect(400)
       .expect(`Content-Type`, /json/)
       .then((err) => {
-        assert.deepEqual(err.body[0], `Rooms number should be countable with a length from 0 to 1000`);
+        assert.deepEqual(err.body[0].errorMessage, `Rooms number should be countable with a length from 0 to 1000`);
       });
   });
 
@@ -163,7 +174,7 @@ describe(`POST /api/offers`, () => {
       .expect(400)
       .expect(`Content-Type`, /json/)
       .then((err) => {
-        assert.deepEqual(err.body[0], `Invalid features`);
+        assert.deepEqual(err.body[0].errorMessage, `Invalid features`);
       });
   });
 
@@ -178,8 +189,8 @@ describe(`POST /api/offers`, () => {
       .expect(400)
       .expect(`Content-Type`, /json/)
       .then((err) => {
-        assert.deepEqual(err.body[0], `Rooms number should be countable with a length from 0 to 1000`);
-        assert.deepEqual(err.body[1], `Invalid features`);
+        assert.deepEqual(err.body[0].errorMessage, `Rooms number should be countable with a length from 0 to 1000`);
+        assert.deepEqual(err.body[1].errorMessage, `Invalid features`);
       });
   });
 
@@ -189,7 +200,7 @@ describe(`POST /api/offers`, () => {
       .send(newOfferRequest)
       .set(`Accept`, `application/json`)
       .expect(404)
-      .expect(`Page was not found`)
-      .expect(`Content-Type`, /html/);
+      .expect({"error": 404, "errorMessage": `Page was not found`})
+      .expect(`Content-Type`, /json/);
   });
 });
