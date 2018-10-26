@@ -87,7 +87,7 @@ offersRouter.get(`/offers/:date/avatar`, asyncMiddleware(async (req, res, _next)
   stream.pipe(res);
 }));
 
-offersRouter.post(`/offers`, jsonParser, upload.single(`photo`), asyncMiddleware(async (req, res, _next) => {
+offersRouter.post(`/offers`, jsonParser, upload.single(`avatar`), asyncMiddleware(async (req, res, _next) => {
   const body = req.body;
   const avatar = req.file;
 

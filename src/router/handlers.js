@@ -16,8 +16,8 @@ const getName = (name) => {
 };
 
 const queryCheck = (query) => {
-  if (!query) {
-    return ``;
+  if (parseInt(query, 10) === 0) {
+    return 0;
   }
   if ((!isFinite(query) || !parseInt(query, 10)) || query < 0) {
     throw new InvalidParameterError(`Invalid parameter error`);
