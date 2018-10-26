@@ -18,6 +18,7 @@ const initializeDb = async () => {
   try {
     client = await MongoClient.connect(url, {useNewUrlParser: true});
     dataBase = client.db(DB_NAME);
+    logger.info(`MongoDB was connected`);
   } catch (err) {
     logger.error(`Failed to connect to MongoDB`, err);
     process.exit(1);

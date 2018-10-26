@@ -18,7 +18,7 @@ const app = express();
 
 describe(`GET /api/offers`, () => {
   before(() => {
-    const offersRouter = require(`../src/router/offers`)(offersStore, imagesStore);
+    const offersRouter = require(`../src/offers/route`)(offersStore, imagesStore);
     app.use(`/api`, offersRouter);
   });
   it(`get all offers`, () => {

@@ -39,7 +39,8 @@ class ImagesStore {
 }
 
 module.exports = new ImagesStore(setupBucket()
-  .then(() => {
+  .then((bucket) => {
     logger.info(`Store was set up`);
+    return bucket;
   })
   .catch((e) => logger.error(`Failed to set up bucket`, e)));

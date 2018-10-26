@@ -20,7 +20,7 @@ const app = express();
 
 describe(`POST /api/offers`, () => {
   before(() => {
-    const router = require(`../src/router/offers`)(newOffersStore, newImagesStore);
+    const router = require(`../src/offers/route`)(newOffersStore, newImagesStore);
     app.use(`/api`, router);
   });
   it(`send offer with correct data as json`, () => {

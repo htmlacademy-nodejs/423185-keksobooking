@@ -9,7 +9,7 @@ const {
 
 const setupCollection = async () => {
   const db = await initializeDb();
-  const collection = db.collection(DB_COLLECTION);
+  const collection = await db.collection(DB_COLLECTION);
   return collection;
 };
 
@@ -39,7 +39,8 @@ class OffersStore {
 }
 
 module.exports = new OffersStore(setupCollection()
-  .then(() => {
-    logger.ingo(`Offers-collection was set up`);
+  .then((collection) => {
+    logger.info(`Offers-collection was set up`);
+    return collection;
   })
   .catch((err) => logger.error(`Failed to set up offers-collection`, err)));

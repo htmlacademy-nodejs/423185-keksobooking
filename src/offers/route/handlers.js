@@ -1,11 +1,11 @@
 "use strict";
 
-const util = require(`../data/util`);
-const {defaultNames} = require(`../data/raw-data`);
+const util = require(`../../data/util`);
+const {defaultNames} = require(`../../data/raw-data`);
 
-const InvalidParameterError = require(`../errors/illegal-date-error`);
-const IllegalArgumentError = require(`../errors/illegal-argument-error`);
-const IlliegalDateError = require(`../errors/illegal-date-error`);
+const InvalidParameterError = require(`../../errors/illegal-date-error`);
+const IllegalArgumentError = require(`../../errors/illegal-argument-error`);
+const IlliegalDateError = require(`../../errors/illegal-date-error`);
 
 const getName = (name) => {
   if (name) {

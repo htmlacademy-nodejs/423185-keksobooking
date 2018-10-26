@@ -1,9 +1,9 @@
 "use strict";
 
 const express = require(`express`);
-const offersStore = require(`../router/store`);
+const offersStore = require(`../offers/store`);
 const imagesStore = require(`../images/store`);
-const offersRouter = require(`../router/offers`)(offersStore, imagesStore);
+const offersRouter = require(`../offers/route`)(offersStore, imagesStore);
 const app = express();
 
 const {

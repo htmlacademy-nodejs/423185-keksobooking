@@ -5,8 +5,7 @@ const colors = require(`colors`);
 
 const commands = [
   require(`./src/commands/author`),
-  require(`./src/commands/description`),
-  require(`./src/commands/license`),
+  require(`./src/commands/fill`),
   require(`./src/commands/version`),
   require(`./src/commands/help`),
   require(`./src/commands/server`)
