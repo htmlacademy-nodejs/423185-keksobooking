@@ -7,7 +7,7 @@ const path = require(`path`);
 const generate = require(`./generator/generate`);
 const defaultMessage = require(`./commands/default`);
 
-let regime = `Approve not granted`;
+let inputCommand;
 let data = {
   count: 0,
   path: ``
@@ -99,17 +99,23 @@ const createConsoleInterface = () => {
   rl.setPrompt(defaultMessage.execute());
   rl.prompt();
   rl.on(`line`, (command) => {
-    switch (regime) {
-      case `Approve not granted`:
+    switch (inputCommand) {
+      case `--author`:
         getApprove(rl, command);
         break;
-      case `Approve granted`:
+      case `--version`:
         setupGeneration(rl, command);
         break;
-      case `Path setup`:
+      case `--fill`:
         checkPath(rl, command);
         break;
-      case `File rewrite`:
+      case `--server`:
+        fileRewrite(rl, command);
+        break;
+      case `--help`:
+        fileRewrite(rl, command);
+        break;
+      default:
         fileRewrite(rl, command);
         break;
     }
