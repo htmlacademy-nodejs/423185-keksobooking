@@ -6,7 +6,10 @@ const imagesStore = require(`../images/store`);
 const offersRouter = require(`../router/offers`)(offersStore, imagesStore);
 const app = express();
 
-const DEFAULT_PORT = 3000;
+const {
+  SERVER_HOST = `localhost`,
+  SERVER_PORT = 3000
+} = process.env;
 
 const checkPort = () => {
   const args = process.argv.slice(2);
@@ -14,7 +17,7 @@ const checkPort = () => {
   if (parseInt(serverPort, 10)) {
     return serverPort;
   } else {
-    return DEFAULT_PORT;
+    return SERVER_PORT;
   }
 };
 
@@ -23,7 +26,7 @@ app.use(express.static(`./static`));
 app.use(`/api`, offersRouter);
 
 const launchServer = (port) => {
-  app.listen(port, () => console.log(`Server launched!\nConnect: http://localhost:${port}`));
+  app.listen(port, () => console.log(`Server launched!\nConnect: http://${SERVER_HOST}:${port}`));
 };
 
 module.exports = {

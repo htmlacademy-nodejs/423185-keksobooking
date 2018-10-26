@@ -1,10 +1,15 @@
 "use strict";
 
 const initializeDb = require(`../database/db`);
+const logger = require(`../logger`);
+
+const {
+  DB_COLLECTION = `offers`
+} = process.env;
 
 const setupCollection = async () => {
   const db = await initializeDb();
-  const collection = db.collection(`offers`);
+  const collection = db.collection(DB_COLLECTION);
   return collection;
 };
 
@@ -33,5 +38,8 @@ class OffersStore {
 
 }
 
-module.exports = new OffersStore(setupCollection().
-  catch((err) => console.error(`Failed to set up offers-collection`, err)));
+module.exports = new OffersStore(setupCollection()
+  .then(() => {
+    logger.ingo(`Offers-collection was set up`);
+  })
+  .catch((err) => logger.error(`Failed to set up offers-collection`, err)));

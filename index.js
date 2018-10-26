@@ -1,5 +1,6 @@
 'use strict';
 
+require(`dotenv`).config();
 const colors = require(`colors`);
 
 const commands = [

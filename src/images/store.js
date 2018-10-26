@@ -2,10 +2,15 @@
 
 const initializeDb = require(`../database/db`);
 const mongodb = require(`mongodb`);
+const logger = require(`../logger`);
+
+const {
+  DB_GRID = `avatars`
+} = process.env;
 
 const setupBucket = async () => {
   const db = await initializeDb();
-  const bucket = new mongodb.GridFSBucket(db, {bucketName: `avatars`});
+  const bucket = new mongodb.GridFSBucket(db, {bucketName: DB_GRID});
   return bucket;
 };
 
@@ -33,5 +38,8 @@ class ImagesStore {
 
 }
 
-module.exports = new ImagesStore(setupBucket().
-  catch((e) => console.error(`Failed to set up bucket`, e)));
+module.exports = new ImagesStore(setupBucket()
+  .then(() => {
+    logger.info(`Store was set up`);
+  })
+  .catch((e) => logger.error(`Failed to set up bucket`, e)));
