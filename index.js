@@ -16,11 +16,8 @@ const defaultMessage = require(`./src/commands/default`);
 
 
 const showError = (com) => {
-  colors.red(`Неизвестная команда ${com}.\n Чтобы прочитать правила использования приложения, наберите '--help'`);
+  return colors.red(`Неизвестная команда '${com}'.\n Чтобы прочитать правила использования приложения, наберите '--help'`);
 };
-
-const arg = process.argv.slice(2);
-const value = arg[0];
 
 const createConsoleInterface = () => {
   const rl = readline.createInterface({
@@ -31,22 +28,29 @@ const createConsoleInterface = () => {
   rl.setPrompt(defaultMessage.execute());
   rl.prompt();
 
-  rl.on(`line`, (command) => {
-    const com = commands.find((item) => value === `--${item.name}`);
-    if (com) {
-      command.execute(commands);
+  rl.on(`line`, (val) => {
+    const commandAvailable = commands.find((item) => val === `--${item.name}`);
+    if (commandAvailable) {
+      commandAvailable.execute(commands);
     } else {
-      console.log(showError(com));
+      console.log(showError(val));
     }
   });
 };
 
-if (value) {
-  const command = commands.find((item) => value === `--${item.name}`);
+// If any arguments
+const consoleArguments = process.argv.slice(2);
+const argumentToConsole = consoleArguments[0];
+
+if (argumentToConsole) {
+  const command = commands.find((item) => argumentToConsole === `--${item.name}`);
   if (command) {
     command.execute(commands);
+    if (argumentToConsole !== `--server`) {
+      process.exit(0);
+    }
   } else {
-    console.error(showError(value));
+    console.error(showError(argumentToConsole));
     process.exit(1);
   }
 } else {

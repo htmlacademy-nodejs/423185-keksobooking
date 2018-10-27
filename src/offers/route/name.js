@@ -29,16 +29,15 @@ module.exports = (offersRouter) => {
     }
 
     const avatar = await offersRouter.imagesStore.get(parsedDate);
-
     if (!avatar) {
       throw new NotFoundError(`No avatars were found at ${convertedDate}`);
     }
 
-    res.header(`Content-Type`, `image/jpg`);
+    res.header(`Content-Type`, `image/jpeg`);
     res.header(`Content-Length`, avatar.info.length);
 
     const stream = avatar.stream;
-    stream.on(`error`, (e) => console.error(e));
+    stream.on(`error`, (err) => console.error(err));
     stream.on(`end`, () => {
       res.end();
       logger.info(`GET request for avatar at chosen date was sent`);

@@ -10,7 +10,7 @@ const location = () => ({
 });
 
 const author = () => ({
-  avatar: `https://robohash.org/${generateRandomString(10)}`
+  avatar: `https://robohash.org/${generateRandomString(10)}.jpeg`
 });
 
 const offer = () => {

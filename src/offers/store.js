@@ -36,6 +36,12 @@ class OffersStore {
     return cursor.insertOne(data);
   }
 
+  async saveAllOffers(data) {
+    const cursor = await this.collection;
+
+    return cursor.insertMany(data);
+  }
+
 }
 
 module.exports = new OffersStore(setupCollection()
