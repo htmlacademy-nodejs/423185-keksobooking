@@ -4,6 +4,14 @@ const readline = require(`readline`);
 const fs = require(`fs`);
 const path = require(`path`);
 
+const commands = [
+  require(`./commands/author`),
+  require(`./commands/fill`),
+  require(`./commands/version`),
+  require(`./commands/help`),
+  require(`./commands/server`)
+];
+
 const generate = require(`./generator/generate`);
 const defaultMessage = require(`./commands/default`);
 
@@ -51,45 +59,6 @@ const setupGeneration = (rl, cmd) => {
   }
 };
 
-const checkPath = (rl, cmd) => {
-  const parsedPath = path.parse(cmd);
-  const fileDir = parsedPath.dir ? parsedPath.dir : `/`;
-  const fileExt = parsedPath.ext;
-  const fileBase = parsedPath.base;
-
-  fs.readdir(fileDir, (err, files) => {
-    if (err) {
-      rl.setPrompt(`Нужно указать корректный путь до файла\n`);
-      rl.prompt();
-    } else if (fileExt !== `.json`) {
-      rl.setPrompt(`Нужно указать файл в формате .json\n`);
-      rl.prompt();
-    } else {
-      const fileExists = files.find((item) => item === fileBase);
-      data.path = cmd;
-      if (!fileExists) {
-        createFile(rl);
-      } else {
-        regime = `File rewrite`;
-        rl.setPrompt(`Файл уже существует. Перезаписать?\n`);
-        rl.prompt();
-      }
-    }
-  });
-};
-
-const fileRewrite = (rl, cmd) => {
-  if (cmd.trim() === `y`) {
-    createFile(rl);
-  } else if (cmd.trim() === `n`) {
-    rl.close();
-    process.exit(0);
-  } else {
-    rl.setPrompt(`Неверная команда\n`);
-    rl.prompt();
-  }
-};
-
 const createConsoleInterface = () => {
   const rl = readline.createInterface({
     input: process.stdin,
@@ -98,26 +67,13 @@ const createConsoleInterface = () => {
 
   rl.setPrompt(defaultMessage.execute());
   rl.prompt();
+
   rl.on(`line`, (command) => {
-    switch (inputCommand) {
-      case `--author`:
-        getApprove(rl, command);
-        break;
-      case `--version`:
-        setupGeneration(rl, command);
-        break;
-      case `--fill`:
-        checkPath(rl, command);
-        break;
-      case `--server`:
-        fileRewrite(rl, command);
-        break;
-      case `--help`:
-        fileRewrite(rl, command);
-        break;
-      default:
-        fileRewrite(rl, command);
-        break;
+    const value = commands.find((item) => value === `--${item.name}`);
+    if (value) {
+      command.execute(commands);
+    } else {
+      showDefault(value);
     }
   });
 };
