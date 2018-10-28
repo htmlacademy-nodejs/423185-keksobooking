@@ -44,7 +44,7 @@ describe(`POST /api/offers`, () => {
 
   it(`send offer with correct data as multipart/form-data with photo`, () => {
     return util.downloadImage(avatar)
-      .then(({body}) => {
+      .then((body) => {
         return supertest(app)
           .post(`/api/offers`)
           .field(newOfferRequest)

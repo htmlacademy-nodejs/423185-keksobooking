@@ -50,8 +50,7 @@ const timestampToDate = (ts) => {
 
 const downloadImage = (url) => new Promise((resolve, _reject) => {
   request.get({uri: url, encoding: null}, (err, res, body) => {
-    console.log(res);
-    resolve(Buffer.from(body));
+    resolve(body);
   });
 });
 
