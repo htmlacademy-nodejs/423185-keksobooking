@@ -19,6 +19,12 @@ const showError = (com) => {
   return colors.red(`Неизвестная команда '${com}'.\n Чтобы прочитать правила использования приложения, наберите '--help'`);
 };
 
+const findCommand = (val) => {
+  const commandAvailable = commands.find((item) => val === `--${item.name}`);
+  return commandAvailable;
+}
+
+// If console interface chosen
 const createConsoleInterface = () => {
   const rl = readline.createInterface({
     input: process.stdin,
@@ -29,7 +35,7 @@ const createConsoleInterface = () => {
   rl.prompt();
 
   rl.on(`line`, (val) => {
-    const commandAvailable = commands.find((item) => val === `--${item.name}`);
+    const commandAvailable = findCommand(val);
     if (commandAvailable) {
       commandAvailable.execute(commands);
     } else {
@@ -43,15 +49,25 @@ const consoleArguments = process.argv.slice(2);
 const argumentToConsole = consoleArguments[0];
 
 if (argumentToConsole) {
-  const command = commands.find((item) => argumentToConsole === `--${item.name}`);
-  if (command) {
-    command.execute(commands);
-    if (argumentToConsole !== `--server`) {
-      process.exit(0);
-    }
-  } else {
+  const commandAvailable = findCommand(argumentToConsole);
+
+  if (!commandAvailable) {
     console.error(showError(argumentToConsole));
     process.exit(1);
+  }
+  if (argumentToConsole === `--fill`) {
+    return new Promise(() => {
+      commandAvailable.execute(commands);
+    })
+    .then(() =>{
+      process.exit(0);
+    });
+  }
+
+  commandAvailable.execute(commands);
+
+  if (argumentToConsole !== `--server`) {
+    process.exit(0);
   }
 } else {
   createConsoleInterface();

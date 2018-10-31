@@ -15,7 +15,18 @@ module.exports = (offersRouter) => {
     if (!offer) {
       throw new NotFoundError(`No offers were found at "${convertedDate}"`);
     }
-    res.send(offer);
+    res.format({
+      html: (() => {
+        res.send(`<div>
+             <p>offer: ${JSON.stringify(offer)}</p>
+            </div>`);
+      }),
+      json: (() => {
+        res.send({
+          offer
+        });
+      })
+    })
     logger.info(`GET request for offer at chosen date was sent`);
   }));
 

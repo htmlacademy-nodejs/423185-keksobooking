@@ -41,28 +41,39 @@ const checkDate = (offerDate) => {
 };
 
 const modifyRequestToResponse = (request) => {
-  const matchArray = request.address.match(/\d+/g);
+  const offer = Object.assign({}, request);
+  if (!offer.features || !offer.features.length) {
+    offer.features = [];
+  }
+  if (!offer.description) {
+    offer.description = ``;
+  }
+  const matchArray = offer.address.match(/\d+/g);
   const location = {x: matchArray[0], y: matchArray[1]};
 
-  const name = getName(request.name);
+  const name = getName(offer.name);
+  console.log(offer);
 
-  const resultingObject = Object.assign({}, {request}, {name}, {location});
+  const resultingObject = Object.assign({}, offer, {name}, {location});
 
   return resultingObject;
 };
 
 
-const modifyRequestToDatabase = (request) => {
+const modifyRequestToDatabase = (request, avatar, photos) => {
   const offer = Object.assign({}, request);
+
   const name = offer.name;
   delete offer.name;
 
-  const matchArray = request.address.match(/\d+/g);
-  const location = {x: matchArray[0], y: matchArray[1]};
-  const date = Date.now();
-  const author = {name: getName(name), avatar: `api/offers/${date}/avatar`};
+  const location = offer.location;
+  const pictures = photos ? offer.photos : [];
+  offer.photos = pictures;
 
-  const resultingObject = Object.assign({}, {offer}, {author}, {date}, {location});
+  const date = Date.now();
+  const author = {name, avatar: avatar ? `api/offers/${date}/avatar` : ``};
+
+  const resultingObject = Object.assign({}, {author}, {offer}, {location}, {date});
 
   return resultingObject;
 };

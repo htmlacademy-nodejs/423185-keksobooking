@@ -25,22 +25,35 @@ module.exports = (offersRouter) => {
     const offersCount = await cursor.count();
     const offersArray = await cursorWithParams.toArray();
 
-    res.send({
-      data: offersArray,
-      skip,
-      limit,
-      total: offersCount
-    });
+    res.format({
+      html: (() => {
+        res.send(`<div>
+             <p>offers: ${JSON.stringify(offersArray)}</p>
+             <p>skip: ${JSON.stringify(skip)}</p>
+             <p>limit: ${JSON.stringify(limit)}</p>
+             <p>total: ${JSON.stringify(offersCount)}</p>
+            </div>`);
+      }),
+      json: (() => {
+        res.send({
+          data: offersArray,
+          skip,
+          limit,
+          total: offersCount
+        });
+      })
+    })
     logger.info(`GET all request was sent`);
   }));
 
-  offersRouter.post(`/offers`, jsonParser, upload.single(`avatar`), asyncMiddleware(async (req, res, _next) => {
+  offersRouter.post(`/offers`, jsonParser, upload.fields([{name: `avatar`}, {name: `preview`}]), asyncMiddleware(async (req, res, _next) => {
     const body = req.body;
-    const avatar = req.file;
+    const avatar = req.files.avatar[0];
+    const preview = req.files.preview;
 
     const validatedRequest = validate(body);
-    const dataToRsponse = handlers.modifyRequestToResponse(validatedRequest);
-    const dataToDatabase = handlers.modifyRequestToDatabase(validatedRequest);
+    const dataToResponse = handlers.modifyRequestToResponse(validatedRequest);
+    const dataToDatabase = handlers.modifyRequestToDatabase(dataToResponse, avatar, preview);
 
     await offersRouter.offersStore.saveOffer(dataToDatabase);
     const dateId = dataToDatabase.date;
@@ -49,7 +62,11 @@ module.exports = (offersRouter) => {
       await offersRouter.imagesStore.save(dateId, new GridStream(avatar.buffer));
     }
 
-    res.send(dataToRsponse);
+    // if (photos) {
+    //   await offersRouter.imagesStore.save(dateId, new GridStream(avatar.buffer));
+    // }
+
+    res.send(dataToResponse);
     logger.info(`POST request was sent`);
   }));
 };
