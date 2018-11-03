@@ -1,4 +1,5 @@
-'use strict';
+/* eslint consistent-return:0*/
+"use strict";
 
 require(`dotenv`).config();
 
@@ -22,7 +23,7 @@ const showError = (com) => {
 const findCommand = (val) => {
   const commandAvailable = commands.find((item) => val === `--${item.name}`);
   return commandAvailable;
-}
+};
 
 // If console interface chosen
 const createConsoleInterface = () => {

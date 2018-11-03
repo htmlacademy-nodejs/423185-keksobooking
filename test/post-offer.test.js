@@ -48,7 +48,7 @@ describe(`POST /api/offers`, () => {
         return supertest(app)
           .post(`/api/offers`)
           .field(newOfferRequest)
-          .attach(`photo`, body)
+          .attach(`avatar`, body)
           .set(`Accept`, `application/json`)
           .set(`Content-Type`, `multipart/form-data`)
           .expect(200)

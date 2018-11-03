@@ -1,10 +1,9 @@
 "use strict";
 
-
+const http = require(`http`);
 const entity = require(`../data/entity`);
 const offersStore = require(`../offers/store`);
 const imagesStore = require(`../images/store`);
-const request = require(`request`);
 
 const fillDatabase = async () => {
   const cnt = 20;
@@ -12,9 +11,14 @@ const fillDatabase = async () => {
 
   await offersStore.saveAllOffers(entities);
 
-  await entities.forEach((item) => {
+  await entities.forEach(async (item) => {
     let offer = item.date;
-    imagesStore.save(offer, request(item.author.avatar));
+    await new Promise((success, _fail) => {
+      http.get(item.author.avatar, async (res) => {
+        await imagesStore.save(offer, res);
+        success();
+      });
+    });
   });
 };
 

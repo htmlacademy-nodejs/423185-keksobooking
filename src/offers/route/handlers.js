@@ -7,6 +7,21 @@ const InvalidParameterError = require(`../../errors/illegal-date-error`);
 const IllegalArgumentError = require(`../../errors/illegal-argument-error`);
 const IlliegalDateError = require(`../../errors/illegal-date-error`);
 
+const checkFiles = (data) => {
+  let avatar;
+  let preview;
+
+  const files = (`files` in data) ? data.files : ``;
+  if (files) {
+    avatar = (`avatar` in files) ? files.avatar[0] : ``;
+    preview = (`preview` in files) ? files.preview[0] : ``;
+  } else {
+    avatar = preview = ``;
+  }
+
+  return {avatar, preview};
+};
+
 const getName = (name) => {
   if (name) {
     return name;
@@ -52,7 +67,6 @@ const modifyRequestToResponse = (request) => {
   const location = {x: matchArray[0], y: matchArray[1]};
 
   const name = getName(offer.name);
-  console.log(offer);
 
   const resultingObject = Object.assign({}, offer, {name}, {location});
 
@@ -79,4 +93,4 @@ const modifyRequestToDatabase = (request, avatar, photos) => {
 };
 
 
-module.exports = {queryCheck, checkDate, modifyRequestToResponse, modifyRequestToDatabase};
+module.exports = {checkFiles, queryCheck, checkDate, modifyRequestToResponse, modifyRequestToDatabase};

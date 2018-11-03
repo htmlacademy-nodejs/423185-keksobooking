@@ -65,6 +65,17 @@ describe(`GET /api/offers`, () => {
       });
   });
 
+  it(`get all offers with html Accept header`, () => {
+    return request(app)
+      .get(`/api/offers`)
+      .set(`Accept`, `text/html`)
+      .expect(200)
+      .expect(`Content-Type`, /html/)
+      .then((response) => {
+        assert.ok(response);
+      });
+  });
+
   it(`get all offers with invalid limit param`, () => {
     return request(app)
       .get(`/api/offers?limit=kfkdfkd`)
@@ -103,6 +114,17 @@ describe(`GET /api/offers/:date`, () => {
       .expect(`Content-Type`, /json/)
       .then((resp) => {
         assert.deepEqual(resp.body.date, testDate);
+      });
+  });
+
+  it(`get wizard in html format`, () => {
+    return request(app)
+      .get(`/api/offers/${testDate}`)
+      .set(`Accept`, `text/html`)
+      .expect(200)
+      .expect(`Content-Type`, /html/)
+      .then((resp) => {
+        assert.ok(resp.body);
       });
   });
 

@@ -2,7 +2,7 @@
 
 module.exports = class ValidationError extends Error {
   constructor(errors) {
-    super(`Bad Request`);
+    super(`Validation error`);
     this.errors = errors;
     this.code = 400;
   }

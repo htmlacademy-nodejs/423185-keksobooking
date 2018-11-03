@@ -42,14 +42,13 @@ module.exports = (offersRouter) => {
           total: offersCount
         });
       })
-    })
+    });
     logger.info(`GET all request was sent`);
   }));
 
-  offersRouter.post(`/offers`, jsonParser, upload.fields([{name: `avatar`}, {name: `preview`}]), asyncMiddleware(async (req, res, _next) => {
+  offersRouter.post(`/offers`, jsonParser, upload.fields([{name: `avatar`, maxCount: 1}, {name: `preview`}]), asyncMiddleware(async (req, res, _next) => {
     const body = req.body;
-    const avatar = req.files.avatar[0];
-    const preview = req.files.preview;
+    const {avatar, preview} = handlers.checkFiles(req);
 
     const validatedRequest = validate(body);
     const dataToResponse = handlers.modifyRequestToResponse(validatedRequest);
