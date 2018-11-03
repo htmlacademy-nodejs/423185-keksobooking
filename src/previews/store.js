@@ -5,7 +5,7 @@ const mongodb = require(`mongodb`);
 const logger = require(`../logger`);
 
 const {
-  DB_GRID = `avatars`
+  DB_GRID = `previews`
 } = process.env;
 
 const setupBucket = async () => {
@@ -14,7 +14,7 @@ const setupBucket = async () => {
   return bucket;
 };
 
-class ImagesStore {
+class PreviewsStore {
   constructor(bucket) {
     this.bucket = bucket;
   }
@@ -38,9 +38,10 @@ class ImagesStore {
 
 }
 
-module.exports = new ImagesStore(setupBucket()
+module.exports = new PreviewsStore(setupBucket()
   .then((bucket) => {
     logger.info(`Collection was set up`);
     return bucket;
   })
   .catch((e) => logger.error(`Failed to set up bucket`, e)));
+

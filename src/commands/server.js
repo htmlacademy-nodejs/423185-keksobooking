@@ -41,7 +41,6 @@ module.exports = {
   name: `server`,
   description: `запускает сервер`,
   async execute(...rest) {
-    console.log(rest);
     let givenPort;
     if (rest) {
       givenPort = rest[1];

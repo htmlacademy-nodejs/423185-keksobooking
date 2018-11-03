@@ -14,8 +14,9 @@ defaultRoute(offersRouter);
 nameRoute(offersRouter);
 errorRoute(offersRouter);
 
-module.exports = (offersStore, imagesStore) => {
+module.exports = (offersStore, imagesStore, previewsStore) => {
   offersRouter.offersStore = offersStore;
   offersRouter.imagesStore = imagesStore;
+  offersRouter.previewsStore = previewsStore;
   return offersRouter;
 };
