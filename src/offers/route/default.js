@@ -57,7 +57,6 @@ module.exports = (offersRouter) => {
   offersRouter.post(`/offers`, jsonParser, upload.fields([{name: `avatar`, maxCount: 1}, {name: `preview`}]), asyncMiddleware(async (req, res, _next) => {
     const body = req.body;
     const {avatar, preview} = handlers.checkFiles(req);
-    console.log(req);
 
     const validatedRequest = validate(body);
     const dataToResponse = handlers.modifyRequestToResponse(validatedRequest);
@@ -71,9 +70,7 @@ module.exports = (offersRouter) => {
     }
 
     if (preview) {
-      preview.forEach(async (item) => {
-        await offersRouter.previewsStore.save(dateId, new GridStream(item.buffer));
-      });
+      await offersRouter.previewsStore.save(dateId, new GridStream(preview.buffer));
     }
 
     res.send(dataToResponse);

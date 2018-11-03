@@ -3,7 +3,8 @@
 const express = require(`express`);
 const offersStore = require(`../offers/store`);
 const imagesStore = require(`../images/store`);
-const offersRouter = require(`../offers/route`)(offersStore, imagesStore);
+const previewsStore = require(`../previews/store`);
+const offersRouter = require(`../offers/route`)(offersStore, imagesStore, previewsStore);
 const app = express();
 
 const {

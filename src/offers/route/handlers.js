@@ -41,6 +41,16 @@ const queryCheck = (query) => {
   }
 };
 
+const checkPhotos = (offerPreviews, preview) => {
+  if (offerPreviews) {
+    return offerPreviews;
+  }
+  if (preview) {
+    return preview.originalname;
+  }
+  return [];
+};
+
 const checkDate = (offerDate) => {
   const convertedDate = util.timestampToDate(offerDate);
 
@@ -74,15 +84,15 @@ const modifyRequestToResponse = (request) => {
 };
 
 
-const modifyRequestToDatabase = (request, avatar, photos) => {
+const modifyRequestToDatabase = (request, avatar, preview) => {
   const offer = Object.assign({}, request);
 
   const name = offer.name;
   delete offer.name;
 
+  offer.photos = checkPhotos(offer.photos, preview);
+
   const location = offer.location;
-  const pictures = photos ? offer.photos : [];
-  offer.photos = pictures;
 
   const date = Date.now();
   const author = {name, avatar: avatar ? `api/offers/${date}/avatar` : ``};
