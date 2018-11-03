@@ -14,15 +14,34 @@ const commands = [
   require(`./src/commands/server`)
 ];
 const defaultMessage = require(`./src/commands/default`);
-
+let port;
 
 const showError = (com) => {
   return colors.red(`Неизвестная команда '${com}'.\n Чтобы прочитать правила использования приложения, наберите '--help'`);
 };
 
 const findCommand = (val) => {
+  const comArray = val.split(` `);
+  if (comArray[0] === `--server`) {
+    port = comArray[1];
+    val = comArray[0];
+  }
+
   const commandAvailable = commands.find((item) => val === `--${item.name}`);
   return commandAvailable;
+};
+
+const executeCommand = async (com, mode, pt) => {
+  await com.execute(commands, pt);
+  switch (mode) {
+    case `console`:
+      break;
+    case `argument`:
+      if (com.name !== `server`) {
+        process.exit(0);
+      }
+      break;
+  }
 };
 
 // If console interface chosen
@@ -38,38 +57,25 @@ const createConsoleInterface = () => {
   rl.on(`line`, (val) => {
     const commandAvailable = findCommand(val);
     if (commandAvailable) {
-      commandAvailable.execute(commands);
+      executeCommand(commandAvailable, `console`, port);
     } else {
       console.log(showError(val));
     }
   });
 };
 
-// If any arguments
+// If any arguments given
 const consoleArguments = process.argv.slice(2);
 const argumentToConsole = consoleArguments[0];
 
 if (argumentToConsole) {
   const commandAvailable = findCommand(argumentToConsole);
-
   if (!commandAvailable) {
     console.error(showError(argumentToConsole));
     process.exit(1);
   }
-  if (argumentToConsole === `--fill`) {
-    return new Promise(() => {
-      commandAvailable.execute(commands);
-    })
-    .then(() =>{
-      process.exit(0);
-    });
-  }
+  executeCommand(commandAvailable, `argument`);
 
-  commandAvailable.execute(commands);
-
-  if (argumentToConsole !== `--server`) {
-    process.exit(0);
-  }
 } else {
   createConsoleInterface();
 }

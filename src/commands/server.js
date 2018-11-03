@@ -11,9 +11,17 @@ const {
   SERVER_PORT = 3000
 } = process.env;
 
-const checkPort = () => {
-  const args = process.argv.slice(2);
-  const serverPort = args[1] ? args[1].trim() : ``;
+const checkPort = (givenPort) => {
+  let serverPort;
+  // If port given in console
+  if (givenPort) {
+    serverPort = givenPort;
+  // If port given as arg
+  } else {
+    const args = process.argv.slice(2);
+    serverPort = args[1] ? args[1].trim() : ``;
+  }
+  // Port check
   if (parseInt(serverPort, 10)) {
     return serverPort;
   } else {
@@ -32,8 +40,13 @@ const launchServer = (port) => {
 module.exports = {
   name: `server`,
   description: `запускает сервер`,
-  execute() {
-    const port = checkPort();
+  async execute(...rest) {
+    console.log(rest);
+    let givenPort;
+    if (rest) {
+      givenPort = rest[1];
+    }
+    const port = checkPort(givenPort);
     launchServer(port);
   },
   app

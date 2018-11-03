@@ -17,16 +17,21 @@ module.exports = (offersRouter) => {
     }
 
     res.format({
+      json: (() => {
+        res.send(
+            offer
+        );
+      }),
       html: (() => {
         res.send(`<div>
              <p>offer: ${JSON.stringify(offer)}</p>
             </div>`);
       }),
-      json: (() => {
+      default: (() => {
         res.send(
             offer
         );
-      })
+      }),
     });
     logger.info(`GET request for offer at chosen date was sent`);
   }));

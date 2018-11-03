@@ -26,6 +26,14 @@ module.exports = (offersRouter) => {
     const offersArray = await cursorWithParams.toArray();
 
     res.format({
+      json: (() => {
+        res.send({
+          data: offersArray,
+          skip,
+          limit,
+          total: offersCount
+        });
+      }),
       html: (() => {
         res.send(`<div>
              <p>offers: ${JSON.stringify(offersArray)}</p>
@@ -34,14 +42,14 @@ module.exports = (offersRouter) => {
              <p>total: ${JSON.stringify(offersCount)}</p>
             </div>`);
       }),
-      json: (() => {
+      default: (() => {
         res.send({
           data: offersArray,
           skip,
           limit,
           total: offersCount
         });
-      })
+      }),
     });
     logger.info(`GET all request was sent`);
   }));

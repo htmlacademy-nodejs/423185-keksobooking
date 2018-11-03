@@ -1,6 +1,6 @@
 "use strict";
 
-const http = require(`http`);
+const https = require(`https`);
 const entity = require(`../data/entity`);
 const offersStore = require(`../offers/store`);
 const imagesStore = require(`../images/store`);
@@ -9,27 +9,29 @@ const fillDatabase = async () => {
   const cnt = 20;
   const entities = entity.generateMultipleEntities(cnt);
 
-  await offersStore.saveAllOffers(entities);
-
   await entities.forEach(async (item) => {
     let offer = item.date;
     await new Promise((success, _fail) => {
-      http.get(item.author.avatar, async (res) => {
+      https.get(item.author.avatar, async (res) => {
         await imagesStore.save(offer, res);
         success();
       });
     });
   });
+
+  entities.forEach((item) => {
+    item.author.avatar = `api/offers/${item.date}/avatar`;
+  });
+
+  await offersStore.saveAllOffers(entities);
 };
 
 module.exports = {
   name: `fill`,
   description: `наполняет базу данных предложениями`,
-  execute() {
-    return new Promise(() => {
-      fillDatabase()
-        .then(() => console.log(`Предложения загружены в базу данных`))
-        .catch((err) => console.error(err));
-    });
+  async execute() {
+    await (fillDatabase()
+    .catch((err) => console.error(err)));
+    console.log(`Предложения загружены в базу данных`);
   }
 };
