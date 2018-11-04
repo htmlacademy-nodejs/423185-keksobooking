@@ -136,7 +136,7 @@ const generateOfferHtml = (data) => {
 };
 
 const generateAllOffersHtml = (data, skip, limit, offersCount) => {
-  let htmlFull;
+  let htmlFull = ``;
   data.forEach((item) => {
     htmlFull += generateOfferHtml(item);
     htmlFull += `<hr>`;
