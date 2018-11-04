@@ -35,12 +35,7 @@ module.exports = (offersRouter) => {
         });
       }),
       html: (() => {
-        res.send(`<div>
-             <p>offers: ${JSON.stringify(offersArray)}</p>
-             <p>skip: ${JSON.stringify(skip)}</p>
-             <p>limit: ${JSON.stringify(limit)}</p>
-             <p>total: ${JSON.stringify(offersCount)}</p>
-            </div>`);
+        res.send(handlers.generateAllOffersHtml(offersArray, skip, limit, offersCount));
       }),
       default: (() => {
         res.send({

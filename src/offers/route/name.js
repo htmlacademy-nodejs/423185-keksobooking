@@ -23,15 +23,8 @@ module.exports = (offersRouter) => {
         );
       }),
       html: (() => {
-        res.send(`<div>
-             <p>offer: ${JSON.stringify(offer)}</p>
-            </div>`);
-      }),
-      default: (() => {
-        res.send(
-            offer
-        );
-      }),
+        res.send(handlers.generateOfferHtml(offer));
+      })
     });
     logger.info(`GET request for offer at chosen date was sent`);
   }));

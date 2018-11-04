@@ -102,5 +102,91 @@ const modifyRequestToDatabase = (request, avatar, preview) => {
   return resultingObject;
 };
 
+const generateOfferHtml = (data) => {
+  return `<div>
+            <h4>Author:</h4>
+            <ul>
+              <li>avatar: ${data.author.avatar}</li>
+              <li>name: ${data.author.name}</li>
+            </ul>
+            <h4>Offer:</h4>
+            <ul>
+               <li>title: ${data.offer.title}</li>
+               <li>address: ${data.offer.address}</li>
+               <li>price: ${data.offer.price}</li>
+               <li>type: ${data.offer.type}</li>
+               <li>rooms: ${data.offer.rooms}</li>
+               <li>guests: ${data.offer.guests}</li>
+               <li>checkin: ${data.offer.checkin}</li>             
+               <li>checkout: ${data.offer.checkout}</li>             
+               <li>features: ${data.offer.features}</li>             
+               <li>description: ${data.offer.description}</li>             
+               <li>photos: ${data.offer.photos}</li>             
+            </ul>
+            <h4>Location:</h4>
+            <ul>
+              <li>x: ${data.location.x}</li>
+              <li>y: ${data.location.y}</li>
+            </ul>
+            <h4>Date:</h4>
+            <ul>
+              <li>date: ${data.date}</li>
+            </ul>            
+          </div>`;
+};
 
-module.exports = {checkFiles, queryCheck, checkDate, modifyRequestToResponse, modifyRequestToDatabase};
+const generateAllOffersHtml = (data, skip, limit, offersCount) => {
+  let htmlFull;
+  data.forEach((item) => {
+    htmlFull += generateOfferHtml(item);
+    htmlFull += `<hr>`;
+  });
+  const infoPart = `<div>
+            <h4>Parameters:</h4>
+            <ul>
+              <li>skip: ${skip}</li>
+              <li>limit: ${limit}</li>
+              <li>total: ${offersCount}</li>              
+            </ul>          
+          </div>`;
+  htmlFull += infoPart;
+
+  return htmlFull;
+};
+
+const generateSimpleErrorHtml = (code, message) => {
+  return `<div>
+           <h4>Error</h4>
+            <ul>
+              <li>Code: ${code}</li>
+              <li>Message: ${message}</li>
+            </ul>
+          </div>`;
+};
+
+const generateCombineErrorHtml = (message, errors) => {
+  let htmlFull = `<h4>Error: ${message}</h4>`;
+  errors.forEach((item) => {
+    htmlFull += `<div>
+                   <ul>
+                     <li>Field: ${item.fieldName}</li>
+                     <li>Message: ${item.errorMessage}</li>
+                   </ul>
+                 </div>
+                 <hr>`;
+  });
+
+  return htmlFull;
+};
+
+module.exports = {
+  checkFiles,
+  queryCheck,
+  checkDate,
+  modifyRequestToResponse,
+  modifyRequestToDatabase,
+  generateOfferHtml,
+  generateAllOffersHtml,
+  generateSimpleErrorHtml,
+  generateCombineErrorHtml
+};
