@@ -19,7 +19,7 @@ const fillDatabase = async () => {
     });
   });
 
-  entities.forEach((item) => {
+  await entities.forEach((item) => {
     item.author.avatar = `api/offers/${item.date}/avatar`;
   });
 

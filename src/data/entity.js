@@ -10,7 +10,7 @@ const location = () => ({
 });
 
 const author = () => ({
-  name: data[generateRandomInteger(0, data.length)],
+  name: data.defaultNames[generateRandomInteger(0, data.length)],
   avatar: `https://robohash.org/${generateRandomString(10)}.jpeg`
 });
 
