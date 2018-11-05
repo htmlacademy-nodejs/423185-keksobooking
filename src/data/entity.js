@@ -4,6 +4,7 @@ const {generateRandomString, generateRandomInteger, randomChoice, shuffle, gener
 const data = require(`./raw-data`);
 
 let setLocation;
+
 const location = () => ({
   x: generateRandomInteger(300, 900),
   y: generateRandomInteger(150, 500)

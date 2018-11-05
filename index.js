@@ -14,6 +14,7 @@ const commands = [
   require(`./src/commands/server`)
 ];
 const defaultMessage = require(`./src/commands/default`);
+
 let port;
 
 const showError = (com) => {
@@ -26,8 +27,8 @@ const findCommand = (val) => {
     port = comArray[1];
     val = comArray[0];
   }
-
   const commandAvailable = commands.find((item) => val === `--${item.name}`);
+
   return commandAvailable;
 };
 

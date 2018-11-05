@@ -75,9 +75,7 @@ const modifyRequestToResponse = (request) => {
   }
   const matchArray = offer.address.match(/\d+/g);
   const location = {x: matchArray[0], y: matchArray[1]};
-
   const name = getName(offer.name);
-
   const resultingObject = Object.assign({}, offer, {name}, {location});
 
   return resultingObject;
@@ -89,14 +87,11 @@ const modifyRequestToDatabase = (request, avatar, preview) => {
 
   const name = offer.name;
   delete offer.name;
-
   offer.photos = checkPhotos(offer.photos, preview);
-
   const location = offer.location;
-
   const date = Date.now();
-  const author = {name, avatar: avatar ? `api/offers/${date}/avatar` : ``};
 
+  const author = {name, avatar: avatar ? `api/offers/${date}/avatar` : ``};
   const resultingObject = Object.assign({}, {author}, {offer}, {location}, {date});
 
   return resultingObject;
@@ -137,6 +132,7 @@ const generateOfferHtml = (data) => {
 
 const generateAllOffersHtml = (data, skip, limit, offersCount) => {
   let htmlFull = ``;
+
   data.forEach((item) => {
     htmlFull += generateOfferHtml(item);
     htmlFull += `<hr>`;
@@ -166,6 +162,7 @@ const generateSimpleErrorHtml = (code, message) => {
 
 const generateCombineErrorHtml = (message, errors) => {
   let htmlFull = `<h4>Error: ${message}</h4>`;
+
   errors.forEach((item) => {
     htmlFull += `<div>
                    <ul>

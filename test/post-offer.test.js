@@ -2,17 +2,18 @@
 
 const supertest = require(`supertest`);
 const assert = require(`assert`);
+const express = require(`express`);
+
 const entity = require(`../src/data/entity`);
 const util = require(`../src/data/util`);
-const express = require(`express`);
+
+const OffersStoreMock = require(`./mock/offers-store-mock`);
+const ImagesStoreMock = require(`./mock/images-store-mock`);
 
 const offer = entity.generateEntity();
 const avatar = entity.author.avatar;
 const newOfferRequest = entity.entityToNewOfferRequest(offer);
 let offerCopy;
-
-const OffersStoreMock = require(`./mock/offers-store-mock`);
-const ImagesStoreMock = require(`./mock/images-store-mock`);
 
 const newOffersStore = new OffersStoreMock(offer);
 const newImagesStore = new ImagesStoreMock();

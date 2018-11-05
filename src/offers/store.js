@@ -47,6 +47,7 @@ class OffersStore {
 module.exports = new OffersStore(setupCollection()
   .then((collection) => {
     logger.info(`Offers-collection was set up`);
+
     return collection;
   })
   .catch((err) => logger.error(`Failed to set up offers-collection`, err)));

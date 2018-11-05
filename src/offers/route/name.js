@@ -1,10 +1,9 @@
 "use strict";
 
-const logger = require(`../../logger`);
-
 const asyncMiddleware = require(`./async-middleware`);
 const handlers = require(`./handlers`);
 const NotFoundError = require(`../../errors/not-found-error`);
+const logger = require(`../../logger`);
 
 module.exports = (offersRouter) => {
   offersRouter.get(`/offers/:date`, asyncMiddleware(async (req, res, _next) => {

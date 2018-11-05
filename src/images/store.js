@@ -11,6 +11,7 @@ const {
 const setupBucket = async () => {
   const db = await initializeDb();
   const bucket = new mongodb.GridFSBucket(db, {bucketName: DB_GRID});
+
   return bucket;
 };
 
@@ -41,6 +42,7 @@ class ImagesStore {
 module.exports = new ImagesStore(setupBucket()
   .then((bucket) => {
     logger.info(`Collection was set up`);
+
     return bucket;
   })
   .catch((e) => logger.error(`Failed to set up bucket`, e)));

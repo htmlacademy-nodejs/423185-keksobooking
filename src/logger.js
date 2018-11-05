@@ -1,6 +1,7 @@
 "use strict";
 
 const winston = require(`winston`);
+
 const {combine, timestamp, prettyPrint} = winston.format;
 
 const logger = winston.createLogger({

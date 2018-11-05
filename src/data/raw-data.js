@@ -40,7 +40,6 @@ const photos = [
 ];
 
 const imageMimes = [`image/jpg`, `image/jpeg`, `image/png`];
-
 const defaultNames = [`Keks`, `Pavel`, `Nikolay`, `Alex`, `Ulyana`, `Anastasyia`, `Julia`];
 
 module.exports = {

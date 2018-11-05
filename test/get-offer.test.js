@@ -2,8 +2,9 @@
 
 const request = require(`supertest`);
 const assert = require(`assert`);
-const entity = require(`../src/data/entity`);
 const express = require(`express`);
+
+const entity = require(`../src/data/entity`);
 
 const OffersStoreMock = require(`./mock/offers-store-mock`);
 const ImagesStoreMock = require(`./mock/images-store-mock`);
@@ -145,5 +146,4 @@ describe(`GET /api/offers/:date`, () => {
       .expect({error: 400, errorMessage: `Invalid date error`})
       .expect(`Content-Type`, /json/);
   });
-
 });

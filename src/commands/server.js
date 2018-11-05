@@ -12,6 +12,10 @@ const {
   SERVER_PORT = 3000
 } = process.env;
 
+const launchServer = (port) => {
+  app.listen(port, () => console.log(`Server launched!\nConnect: http://${SERVER_HOST}:${port}`));
+};
+
 const checkPort = (givenPort) => {
   let serverPort;
   // If port given in console
@@ -31,12 +35,7 @@ const checkPort = (givenPort) => {
 };
 
 app.use(express.static(`./static`));
-
 app.use(`/api`, offersRouter);
-
-const launchServer = (port) => {
-  app.listen(port, () => console.log(`Server launched!\nConnect: http://${SERVER_HOST}:${port}`));
-};
 
 module.exports = {
   name: `server`,

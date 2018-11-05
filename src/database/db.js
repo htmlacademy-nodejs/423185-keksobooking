@@ -11,7 +11,6 @@ const {
 
 const url = `mongodb://${DB_HOST}:${DB_PORT}`;
 
-
 const initializeDb = async () => {
   let client;
   let dataBase;
