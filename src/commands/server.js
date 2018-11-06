@@ -13,7 +13,16 @@ const {
 } = process.env;
 
 const launchServer = (port) => {
-  app.listen(port, () => console.log(`Server launched!\nConnect: http://${SERVER_HOST}:${port}`));
+  app.listen(port, () => console.log(`Server launched!\nConnect: http://${SERVER_HOST}:${port}`))
+    .on(`error`, (err) => {
+      if (err.code === `EADDRINUSE`) {
+        console.error(`Порт занят`);
+        process.exit(1);
+      } else {
+        console.error(`Произошла ошибка`, err);
+        process.exit(1);
+      }
+    });
 };
 
 const checkPort = (givenPort) => {
