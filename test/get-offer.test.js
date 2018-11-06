@@ -2,8 +2,9 @@
 
 const request = require(`supertest`);
 const assert = require(`assert`);
-const entity = require(`../src/data/entity`);
 const express = require(`express`);
+
+const entity = require(`../src/data/entity`);
 
 const OffersStoreMock = require(`./mock/offers-store-mock`);
 const ImagesStoreMock = require(`./mock/images-store-mock`);
@@ -18,7 +19,7 @@ const app = express();
 
 describe(`GET /api/offers`, () => {
   before(() => {
-    const offersRouter = require(`../src/router/offers`)(offersStore, imagesStore);
+    const offersRouter = require(`../src/offers/route`)(offersStore, imagesStore);
     app.use(`/api`, offersRouter);
   });
   it(`get all offers`, () => {
@@ -65,6 +66,17 @@ describe(`GET /api/offers`, () => {
       });
   });
 
+  it(`get all offers with html Accept header`, () => {
+    return request(app)
+      .get(`/api/offers`)
+      .set(`Accept`, `text/html`)
+      .expect(200)
+      .expect(`Content-Type`, /html/)
+      .then((response) => {
+        assert.ok(response);
+      });
+  });
+
   it(`get all offers with invalid limit param`, () => {
     return request(app)
       .get(`/api/offers?limit=kfkdfkd`)
@@ -106,6 +118,17 @@ describe(`GET /api/offers/:date`, () => {
       });
   });
 
+  it(`get wizard in html format`, () => {
+    return request(app)
+      .get(`/api/offers/${testDate}`)
+      .set(`Accept`, `text/html`)
+      .expect(200)
+      .expect(`Content-Type`, /html/)
+      .then((resp) => {
+        assert.ok(resp.body);
+      });
+  });
+
   it(`get unknown offer with date "971723378"`, () => {
     return request(app)
       .get(`/api/offers/971723378`)
@@ -123,5 +146,4 @@ describe(`GET /api/offers/:date`, () => {
       .expect({error: 400, errorMessage: `Invalid date error`})
       .expect(`Content-Type`, /json/);
   });
-
 });

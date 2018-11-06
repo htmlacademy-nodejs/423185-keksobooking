@@ -11,7 +11,8 @@ Thumbs.db
 *.log
 npm-debug.log*
 node_modules/
-data/
+mongo-data/
+data-base/
 
 # Папка с собранными файлами проекта
 build/

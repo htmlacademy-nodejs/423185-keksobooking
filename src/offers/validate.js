@@ -19,6 +19,7 @@ const checkTitle = (title) => {
   if (!title) {
     return false;
   }
+
   return title.length <= MAX_TITLE_LENGTH && title.length >= MIN_TITLE_LENGTH && typeof title === `string`;
 };
 
@@ -26,6 +27,7 @@ const checkType = (type) => {
   if (!type) {
     return false;
   }
+
   return placeTypes.find((item) => item === type);
 };
 
@@ -33,6 +35,7 @@ const checkPrice = (price) => {
   if (!price) {
     return false;
   }
+
   return price > MIN_PRICE && price <= MAX_PRICE && parseInt(price, 10);
 };
 
@@ -50,6 +53,7 @@ const checkAddress = (address) => {
   if (matchArray.length !== 2) {
     return false;
   }
+
   return true;
 };
 
@@ -58,14 +62,15 @@ const checkTime = (time) => {
   if (matchArray) {
     return true;
   }
-  return false;
 
+  return false;
 };
 
 const checkRooms = (rooms) => {
   if (!rooms) {
     return false;
   }
+
   return rooms >= MIN_ROOMS_NUMBER && rooms <= MAX_ROOMS_NUMBER;
 };
 
@@ -75,6 +80,7 @@ const checkFeatures = (featuresInserted) => {
   } else if (typeof featuresInserted === `string`) {
     return features.includes(featuresInserted);
   } else {
+
     return featuresInserted.every((item) => features.includes(item));
   }
 };
@@ -83,6 +89,7 @@ const checkName = (name) => {
   if (!name) {
     return true;
   } else {
+
     return defaultNames.find((item) => item === name);
   }
 };
@@ -119,6 +126,7 @@ const validate = (data) => {
   if (errors.length > 0) {
     throw new ValidationError(errors);
   }
+
   return data;
 };
 

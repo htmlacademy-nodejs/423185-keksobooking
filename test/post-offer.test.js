@@ -2,17 +2,18 @@
 
 const supertest = require(`supertest`);
 const assert = require(`assert`);
+const express = require(`express`);
+
 const entity = require(`../src/data/entity`);
 const util = require(`../src/data/util`);
-const express = require(`express`);
+
+const OffersStoreMock = require(`./mock/offers-store-mock`);
+const ImagesStoreMock = require(`./mock/images-store-mock`);
 
 const offer = entity.generateEntity();
 const avatar = entity.author.avatar;
 const newOfferRequest = entity.entityToNewOfferRequest(offer);
 let offerCopy;
-
-const OffersStoreMock = require(`./mock/offers-store-mock`);
-const ImagesStoreMock = require(`./mock/images-store-mock`);
 
 const newOffersStore = new OffersStoreMock(offer);
 const newImagesStore = new ImagesStoreMock();
@@ -20,7 +21,7 @@ const app = express();
 
 describe(`POST /api/offers`, () => {
   before(() => {
-    const router = require(`../src/router/offers`)(newOffersStore, newImagesStore);
+    const router = require(`../src/offers/route`)(newOffersStore, newImagesStore);
     app.use(`/api`, router);
   });
   it(`send offer with correct data as json`, () => {
@@ -44,11 +45,11 @@ describe(`POST /api/offers`, () => {
 
   it(`send offer with correct data as multipart/form-data with photo`, () => {
     return util.downloadImage(avatar)
-      .then(({body}) => {
+      .then((body) => {
         return supertest(app)
           .post(`/api/offers`)
           .field(newOfferRequest)
-          .attach(`photo`, body)
+          .attach(`avatar`, body)
           .set(`Accept`, `application/json`)
           .set(`Content-Type`, `multipart/form-data`)
           .expect(200)
