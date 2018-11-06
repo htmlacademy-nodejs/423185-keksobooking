@@ -13,15 +13,13 @@ const storage = multer.memoryStorage();
 const upload = multer({storage});
 const jsonParser = express.json();
 
-const pageDefault = {
-  LIMIT: 20,
-  SKIP: 0
-};
+const PAGE_DEFAULT_LIMIT = 20;
+const PAGE_DEFAULT_SKIP = 0;
 
 module.exports = (offersRouter) => {
   offersRouter.get(`/offers`, asyncMiddleware(async (req, res, _next) => {
-    const limit = req.query.limit ? handlers.queryCheck(req.query.limit) : pageDefault.LIMIT;
-    const skip = req.query.skip ? handlers.queryCheck(req.query.skip) : pageDefault.SKIP;
+    const limit = req.query.limit ? handlers.queryCheck(req.query.limit) : PAGE_DEFAULT_LIMIT;
+    const skip = req.query.skip ? handlers.queryCheck(req.query.skip) : PAGE_DEFAULT_SKIP;
     const cursor = await offersRouter.offersStore.getAllOffers();
     const cursorWithParams = await cursor.skip(skip).limit(limit);
     const offersCount = await cursor.count();

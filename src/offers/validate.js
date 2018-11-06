@@ -3,32 +3,24 @@
 const {placeTypes, features, defaultNames} = require(`../data/raw-data`);
 const ValidationError = require(`../errors/validation-error`);
 
-const titleLength = {
-  MIN: 1,
-  MAX: 140
-};
+const MAX_TITLE_LENGTH = 140;
+const MIN_TITLE_LENGTH = 1;
 
-const offerPrice = {
-  MIN: 0,
-  MAX: 100000
-};
+const MIN_PRICE = 0;
+const MAX_PRICE = 100000;
 
-const addressLength = {
-  MIN: 1,
-  MAX: 100
-};
+const MAX_ADDRESS_LENGTH = 100;
+const MIN_ADDRESS_LENGTH = 1;
 
-const roomsNumber = {
-  MIN: 0,
-  MAX: 1000
-};
+const MAX_ROOMS_NUMBER = 1000;
+const MIN_ROOMS_NUMBER = 0;
 
 const checkTitle = (title) => {
   if (!title) {
     return false;
   }
 
-  return title.length <= titleLength.MAX && title.length >= titleLength.MIN && typeof title === `string`;
+  return title.length <= MAX_TITLE_LENGTH && title.length >= MIN_TITLE_LENGTH && typeof title === `string`;
 };
 
 const checkType = (type) => {
@@ -44,14 +36,14 @@ const checkPrice = (price) => {
     return false;
   }
 
-  return price > offerPrice.MIN && price <= offerPrice.MAX && parseInt(price, 10);
+  return price > MIN_PRICE && price <= MAX_PRICE && parseInt(price, 10);
 };
 
 const checkAddress = (address) => {
   if (!address) {
     return false;
   }
-  if (address.length > addressLength.MAX || address.length < addressLength.MIN || typeof address !== `string`) {
+  if (address.length > MAX_ADDRESS_LENGTH || address.length < MIN_ADDRESS_LENGTH || typeof address !== `string`) {
     return false;
   }
   const matchArray = address.match(/\d+/g);
@@ -79,7 +71,7 @@ const checkRooms = (rooms) => {
     return false;
   }
 
-  return rooms >= roomsNumber.MIN && rooms <= roomsNumber.MAX;
+  return rooms >= MIN_ROOMS_NUMBER && rooms <= MAX_ROOMS_NUMBER;
 };
 
 const checkFeatures = (featuresInserted) => {
